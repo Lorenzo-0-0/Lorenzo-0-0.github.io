@@ -335,24 +335,37 @@ a:hover { text-decoration: underline; }
 }
 
 /* ============ Visitor map ============ */
-.visitor-section { text-align: center; }
-.visitor-section h2 { text-align: left; }
-.visitor-globe {
-  display: inline-block;
-  padding: 12px;
-  background: #ffffff;
-  border: 1px solid #E7E5E4;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+.visitor-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
 }
-.visitor-globe img {
+.visitor-section h2 { align-self: flex-start; margin-bottom: 0; }
+.visitor-globe {
+  width: 200px;
+  height: 215px;
+  position: relative;
+}
+.visitor-globe .clstrm_outer { margin: 0 auto !important; }
+.visitor-badge {
+  display: inline-block;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+.visitor-badge:hover {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 4px 10px rgba(194, 65, 12, 0.25));
+}
+.visitor-badge img {
   display: block;
-  max-width: 320px;
-  height: auto;
+  height: 26px;
+  width: auto;
+  border-radius: 4px;
 }
 .visitor-note {
-  margin: 14px 0 0;
-  font-size: 12px;
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.04em;
   color: #A8A29E;
 }
 .visitor-note a { color: #A8A29E; border-bottom: 1px dotted #C9C5C2; }

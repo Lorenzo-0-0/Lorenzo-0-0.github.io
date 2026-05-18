@@ -244,18 +244,14 @@
     <section class="section visitor-section" id="visitors">
       <h2>Visitors</h2>
       <div class="visitor-globe">
-        <!--
-          TODO: 网页部署后去 https://clustrmaps.com/add 注册你的域名:
-            1. 输入网站 URL → verify
-            2. 选 widget 类型: "Globe" (旋转地球)
-            3. 把 ClustrMaps 给的整段 <script> 替换下面的 script src 里的 d= hash
-          目前用的是 ClustrMaps demo hash，数据不是你的真实访客，仅作样式预览。
-          ClustrMaps globe.js 依赖 jQuery，所以前置一行 jQuery CDN。
-        -->
+        <!-- ClustrMaps globe.js 依赖 jQuery -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=eA5xcTFMwdBZ7-AsdnfGEKEHVU1pLQFIPvzHIKAl1rA&cl=ffffff&w=320"></script>
+        <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=zgZINq8Bt6k5p_QY-IJCOai6AJaxLDHSzWoQ485QVBE&cl=ffffff&w=200"></script>
       </div>
-      <p class="visitor-note">Visitor stats powered by <a href="https://clustrmaps.com/" target="_blank" rel="noopener">ClustrMaps</a>.</p>
+      <a class="visitor-badge" href="https://hits.sh/lorenzo-0-0.github.io/" target="_blank" rel="noopener" aria-label="Visitor count">
+        <img src="https://hits.sh/lorenzo-0-0.github.io.svg?style=for-the-badge&label=Visits&color=C2410C&labelColor=57534E" alt="Visitor count" loading="lazy" />
+      </a>
+      <p class="visitor-note">Stats by <a href="https://clustrmaps.com/" target="_blank" rel="noopener">ClustrMaps</a> &middot; <a href="https://hits.sh/" target="_blank" rel="noopener">hits.sh</a></p>
     </section>
 
     <footer class="footer">
