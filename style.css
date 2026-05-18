@@ -18,6 +18,16 @@ ul { list-style: none; padding: 0; margin: 0; }
 a { color: #C2410C; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+/* Text selection — theme orange tint */
+::selection {
+  background: rgba(194, 65, 12, 0.22);
+  color: #1C1917;
+}
+::-moz-selection {
+  background: rgba(194, 65, 12, 0.22);
+  color: #1C1917;
+}
+
 /* ============ Sticky top banner ============ */
 .site-header {
   position: sticky;
