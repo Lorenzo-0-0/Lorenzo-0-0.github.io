@@ -358,6 +358,54 @@ a:hover { text-decoration: underline; }
   position: relative;
 }
 .visitor-globe .clstrm_outer { margin: 0 auto !important; }
+
+/* Self-built fallback globe (pure CSS, zero external deps) */
+.css-globe {
+  width: 180px;
+  height: 180px;
+  margin: 8px auto 0;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 33% 28%, #8fc0e8 0%, #4485c4 42%, #235c9c 70%, #123f6e 100%);
+  box-shadow:
+    inset -16px -16px 36px rgba(8, 28, 54, 0.55),
+    inset 8px 8px 22px rgba(255, 255, 255, 0.22),
+    0 12px 30px rgba(0, 0, 0, 0.14);
+}
+.css-globe[hidden] { display: none; }
+.css-globe__land {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background-repeat: repeat-x;
+  background-size: 50% 100%;
+  background-image:
+    radial-gradient(ellipse 30px 20px at 20% 34%, #6aa564 60%, transparent 63%),
+    radial-gradient(ellipse 22px 28px at 38% 60%, #5f9c5f 60%, transparent 63%),
+    radial-gradient(ellipse 27px 16px at 60% 28%, #6aa564 60%, transparent 63%),
+    radial-gradient(ellipse 18px 24px at 78% 56%, #5f9c5f 60%, transparent 63%),
+    radial-gradient(ellipse 14px 12px at 50% 80%, #6aa564 60%, transparent 63%);
+  opacity: 0.9;
+  animation: globe-rotate 16s linear infinite;
+}
+.css-globe::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 38%);
+  pointer-events: none;
+}
+@keyframes globe-rotate {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .css-globe__land { animation: none; }
+}
 .visitor-badge {
   display: inline-block;
   transition: transform 0.18s ease, filter 0.18s ease;

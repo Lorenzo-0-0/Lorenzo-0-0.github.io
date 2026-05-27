@@ -258,9 +258,11 @@
     <section class="section visitor-section" id="visitors">
       <h2>Visitors</h2>
       <div class="visitor-globe">
-        <!-- ClustrMaps globe.js 依赖 jQuery -->
+        <!-- ClustrMaps globe.js 依赖 jQuery；若 ClustrMaps 不可达，script.js 会显示下面的自建地球 -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
         <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=zgZ1Nq8Bt6k5p_QY-IJCOai6AJaxLDHSzWoQ485QVBE&cl=ffffff&w=200"></script>
+        <!-- 自建旋转地球兜底（纯 CSS，零外部依赖，ClustrMaps 挂时显示） -->
+        <div class="css-globe" aria-hidden="true" hidden><div class="css-globe__land"></div></div>
       </div>
       <a class="visitor-badge" href="https://hits.sh/lorenzo-0-0.github.io/" target="_blank" rel="noopener" aria-label="Visitor count">
         <img src="https://hits.sh/lorenzo-0-0.github.io.svg?style=flat-square&label=visits&color=D6BFA5&labelColor=A8A29E" alt="Visitor count" loading="lazy" />
