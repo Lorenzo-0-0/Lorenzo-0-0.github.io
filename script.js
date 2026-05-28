@@ -11,22 +11,19 @@ document.querySelectorAll('.pub-teaser--video').forEach(function (wrap) {
   });
 });
 
-// Visitor globe fallback: if ClustrMaps fails to render (service/DNS down),
-// reveal the self-built CSS globe so the section never shows an empty gap.
+// Visitor globe: fallback emoji globe is shown by default (zero white-screen risk).
+// If ClustrMaps successfully renders its real visitor globe, hide the emoji fallback.
 (function () {
-  function checkGlobe() {
-    var wrap = document.querySelector('.visitor-globe');
-    if (!wrap) return;
+  var wrap = document.querySelector('.visitor-globe');
+  if (!wrap) return;
+  var fallback = wrap.querySelector('.css-globe');
+  function syncFallback() {
     var clstr = wrap.querySelector('.clstrm_outer');
-    var rendered = clstr && clstr.offsetHeight > 10;
-    if (!rendered) {
-      var fallback = wrap.querySelector('.css-globe');
-      if (fallback) fallback.hidden = false;
-    }
+    var clustrmapsOk = clstr && clstr.offsetHeight > 10;
+    if (fallback) fallback.hidden = clustrmapsOk;
   }
-  if (document.readyState === 'complete') {
-    setTimeout(checkGlobe, 3000);
-  } else {
-    window.addEventListener('load', function () { setTimeout(checkGlobe, 3000); });
-  }
+  // Check multiple times: ClustrMaps may take a moment to inject its DOM.
+  syncFallback();
+  setTimeout(syncFallback, 1500);
+  setTimeout(syncFallback, 4000);
 })();
