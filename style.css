@@ -360,12 +360,23 @@ a:hover { text-decoration: underline; }
 .visitor-globe .clstrm_outer { margin: 0 auto !important; }
 
 /* Fallback globe: 3 earth emojis cross-fading to simulate Earth rotation */
+.css-globe-link {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+}
+.css-globe-link:hover { text-decoration: none; }
+.css-globe-link:hover .css-globe {
+  transform: scale(1.04);
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.22));
+}
 .css-globe {
   width: 180px;
   height: 180px;
   margin: 12px auto 0;
   position: relative;
   filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.16));
+  transition: transform 0.25s ease, filter 0.25s ease;
 }
 .css-globe[hidden] { display: none; }
 .globe-face {
