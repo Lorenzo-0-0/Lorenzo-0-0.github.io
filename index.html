@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css?v=11" />
 </head>
 <body>
 
@@ -135,9 +135,12 @@
       <h2>Publications</h2>
 
       <article class="pub">
-        <img class="pub-teaser" src="assets/teaser_mars.png" alt="MARS Policy teaser" />
+        <div class="pub-teaser pub-teaser--video" data-video="assets/mars_video.mp4?v=11">
+          <img class="teaser-still" src="assets/teaser_mars.png?v=11" alt="MARS Policy teaser" />
+          <video class="teaser-video" preload="none" playsinline loop muted></video>
+        </div>
         <div class="pub-body">
-          <div class="pub-venue venue--gray">arXiv 2026</div>
+          <div class="pub-venue venue--gray">Under Review</div>
           <h3 class="pub-title">MARS Policy: Multimodality Only When It Matters</h3>
           <p class="pub-authors">
             <a href="https://jiajindou.github.io/" target="_blank" rel="noopener">Jindou Jia</a>,
@@ -298,6 +301,6 @@
     </footer>
 
   </main>
-  <script src="script.js?v=10" defer></script>
+  <script src="script.js?v=11" defer></script>
 </body>
 </html>
