@@ -317,31 +317,45 @@ a:hover { text-decoration: underline; }
 
 /* ============ Buttons ============ */
 .btn {
-  display: inline-block;
-  padding: 5px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
   font-size: 13px;
-  color: #3A3432;
-  border: 1px solid #E5E5E5;
-  border-radius: 4px;
+  font-weight: 500;
+  color: #44403C;
+  border: 1px solid #E7E5E4;
+  border-radius: 8px;
   background: #ffffff;
   text-decoration: none;
   line-height: 1.4;
-  transition: border-color 0.15s, color 0.15s;
+  transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+.btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.62;
+  transition: opacity 0.18s ease;
 }
 .btn:hover {
-  border-color: #C2410C;
   color: #C2410C;
+  border-color: #E8B49C;
+  background: #FDF6F1;
   text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px -6px rgba(194, 65, 12, 0.35);
 }
-.btn--disabled {
-  color: #B0B0B0;
-  border-color: #ECECEC;
-  cursor: default;
-}
+.btn:hover svg { opacity: 1; }
+.btn:active { transform: translateY(0); box-shadow: none; }
+.btn--disabled,
 .btn--disabled:hover {
-  border-color: #ECECEC;
-  color: #B0B0B0;
-  text-decoration: none;
+  color: #B8B4B0;
+  border-color: #ECEAE8;
+  background: #ffffff;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
 }
 
 /* ============ Visitor map ============ */
