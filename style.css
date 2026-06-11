@@ -378,10 +378,11 @@ a:hover { text-decoration: underline; }
 }
 .visitor-section h2 { align-self: flex-start; margin-bottom: 0; }
 .visitor-globe {
-  width: 280px;
+  width: 200px;
   max-width: 100%;
   margin: 0 auto;
 }
+.visitor-globe a { cursor: pointer; }
 .visitor-badge {
   display: inline-block;
   transition: transform 0.18s ease, filter 0.18s ease;
