@@ -5,6 +5,7 @@ html, body {
   padding: 0;
   background: #fafaf9;
 }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
   font-size: 17px;
@@ -255,12 +256,12 @@ a:hover { text-decoration: underline; }
 .venue--gray { color: #808080; }
 .venue--red  { color: #C2410C; }
 .pub-title {
-  font-family: 'Instrument Sans', sans-serif;
-  font-size: 20px;
-  font-weight: 500;
+  font-family: 'Hedvig Letters Serif', Georgia, serif;
+  font-size: 21px;
+  font-weight: 400;
   color: #1C1917;
   margin: 0 0 10px;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 .pub-authors {
   font-size: 15px;
@@ -381,6 +382,8 @@ a:hover { text-decoration: underline; }
   width: 200px;
   max-width: 100%;
   margin: 0 auto;
+  /* Reserve the widget's injected 200x217 footprint to avoid layout shift */
+  min-height: 217px;
 }
 .visitor-globe a { cursor: pointer; }
 .visitor-badge {
@@ -408,6 +411,9 @@ a:hover { text-decoration: underline; }
   border-top: 1px solid #E7E5E4;
   font-size: 12px;
   color: #808080;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 /* ============ Responsive ============ */
@@ -443,7 +449,7 @@ a:hover { text-decoration: underline; }
     width: 100%;
     height: auto;
   }
-  .pub-title { font-size: 18px; }
+  .pub-title { font-size: 19px; }
   .pub-authors { font-size: 14px; }
 
   .row { flex-wrap: wrap; }
