@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="stylesheet" href="style.css?v=16" />
 </head>
 <body>
 
@@ -290,7 +290,10 @@
     <!-- ===== Visitor map ===== -->
     <section class="section visitor-section" id="visitors">
       <h2>Visitors</h2>
-      <!-- Globe widget removed: ClustrMaps service outage. Restore by reverting this commit if it comes back. -->
+      <!-- Globe widget: MapMyVisitors (replaces ClustrMaps after its 2026-05 outage). Must stay inline — globe.js uses document.write. -->
+      <div class="visitor-globe">
+        <script type="text/javascript" id="mmvst_globe" src="//mapmyvisitors.com/globe.js?d=VDMcorj7DBEgweacb66JaL5lQ8fF7DbRdAHfuiGRnEQ"></script>
+      </div>
       <a class="visitor-badge" href="https://hits.sh/lorenzo-0-0.github.io/" target="_blank" rel="noopener" aria-label="Visitor count">
         <img src="https://hits.sh/lorenzo-0-0.github.io.svg?style=flat-square&label=visits&color=D6BFA5&labelColor=A8A29E" alt="Visitor count" loading="lazy" />
       </a>
