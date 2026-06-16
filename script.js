@@ -12,17 +12,22 @@ document.querySelectorAll('.pub-teaser--video').forEach(function (wrap) {
 });
 
 
-// Visitor globe: let the MapMyVisitors widget keep its own anchor (points to
-// this site's geo stats map). Only open it in a new tab — do NOT override href.
+// Visitor globe: point clicks to THIS site's MapMyVisitors stats map
+// (the widget's native anchor only points to the mapmyvisitors.com homepage).
+// web/1c5i9 = public visitor map for https://lorenzo-0-0.github.io/ (verified).
 (function () {
+  var STATS_URL = 'https://mapmyvisitors.com/web/1c5i9';
   var globe = document.querySelector('.visitor-globe');
   if (!globe) return;
-  function openInNewTab() {
+  function fix() {
     var a = document.getElementById('mmvst_a');
     if (!a) return;
+    if (a.getAttribute('href') !== STATS_URL) a.setAttribute('href', STATS_URL);
     a.setAttribute('target', '_blank');
     a.setAttribute('rel', 'noopener');
   }
-  openInNewTab();
-  new MutationObserver(openInNewTab).observe(globe, { childList: true, subtree: true });
+  fix();
+  new MutationObserver(fix).observe(globe, {
+    childList: true, subtree: true, attributes: true, attributeFilter: ['href']
+  });
 })();
