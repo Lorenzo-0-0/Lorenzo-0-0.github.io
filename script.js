@@ -12,27 +12,17 @@ document.querySelectorAll('.pub-teaser--video').forEach(function (wrap) {
 });
 
 
-// Visitor globe: send clicks to this site's public stats page in a new tab
-// (widget's injected anchor defaults to the mapmyvisitors.com homepage).
+// Visitor globe: let the MapMyVisitors widget keep its own anchor (points to
+// this site's geo stats map). Only open it in a new tab — do NOT override href.
 (function () {
-  var STATS_URL = 'https://hits.sh/lorenzo-0-0.github.io/';
-  function fix() {
-    var a = document.getElementById('mmvst_a');
-    if (!a) return false;
-    if (a.getAttribute('href') !== STATS_URL) {
-      a.setAttribute('href', STATS_URL);
-      a.setAttribute('target', '_blank');
-      a.setAttribute('rel', 'noopener');
-    }
-    return true;
-  }
   var globe = document.querySelector('.visitor-globe');
   if (!globe) return;
-  fix();
-  new MutationObserver(fix).observe(globe, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['href']
-  });
+  function openInNewTab() {
+    var a = document.getElementById('mmvst_a');
+    if (!a) return;
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener');
+  }
+  openInNewTab();
+  new MutationObserver(openInNewTab).observe(globe, { childList: true, subtree: true });
 })();
