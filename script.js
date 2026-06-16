@@ -15,7 +15,7 @@ document.querySelectorAll('.pub-teaser--video').forEach(function (wrap) {
 // Visitor globe: send clicks to this site's public stats page in a new tab
 // (widget's injected anchor defaults to the mapmyvisitors.com homepage).
 (function () {
-  var STATS_URL = 'https://mapmyvisitors.com/web/1c5c2';
+  var STATS_URL = 'https://hits.sh/lorenzo-0-0.github.io/';
   function fix() {
     var a = document.getElementById('mmvst_a');
     if (!a) return false;
