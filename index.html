@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=23" />
+  <link rel="stylesheet" href="style.css?v=24" />
 </head>
 <body>
 
@@ -317,10 +317,11 @@
     <!-- ===== Visitor map ===== -->
     <section class="section visitor-section" id="visitors">
       <h2>Visitors</h2>
-      <!-- Globe widget: MapMyVisitors (replaces ClustrMaps after its 2026-05 outage). Must stay inline — globe.js uses document.write. -->
-      <div class="visitor-globe">
-        <script type="text/javascript" id="mmvst_globe" src="//mapmyvisitors.com/globe.js?d=g60AkZdbT2OByzMYEhX6DGxHF8_3aRzO24Eh8_fQX7M"></script>
-      </div>
+      <!-- Self-hosted 3D globe (globe.gl + geojs.io). Replaces the dead ClustrMaps/
+           MapMyVisitors widgets — those services shut down or stopped recording.
+           This is fully client-side, no domain-lock, no account, cannot silently die. -->
+      <div id="visitor-globe" class="visitor-globe" role="img" aria-label="Rotating globe highlighting the visitor's location"></div>
+      <p id="visitor-caption" class="visitor-caption"></p>
       <a class="visitor-badge" href="https://hits.sh/lorenzo-0-0.github.io/" target="_blank" rel="noopener" aria-label="Visitor count">
         <img src="https://hits.sh/lorenzo-0-0.github.io.svg?style=flat-square&label=visits&color=D6BFA5&labelColor=A8A29E" alt="Visitor count" loading="lazy" />
       </a>
@@ -332,6 +333,6 @@
     </footer>
 
   </main>
-  <script src="script.js?v=25" defer></script>
+  <script src="script.js?v=26" defer></script>
 </body>
 </html>

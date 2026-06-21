@@ -395,13 +395,20 @@ a:hover { text-decoration: underline; }
 }
 .visitor-section h2 { align-self: flex-start; margin-bottom: 0; }
 .visitor-globe {
-  width: 200px;
+  width: 280px;
+  height: 280px;
   max-width: 100%;
   margin: 0 auto;
-  /* Reserve the widget's injected 200x217 footprint to avoid layout shift */
-  min-height: 217px;
 }
-.visitor-globe a { cursor: pointer; }
+.visitor-globe canvas { display: block; margin: 0 auto; cursor: grab; }
+.visitor-caption {
+  margin: 2px 0 0;
+  min-height: 1.25em;
+  font-size: 0.88rem;
+  color: #78716C;
+  text-align: center;
+}
+.visitor-caption b { color: #C2410C; font-weight: 600; }
 .visitor-badge {
   display: inline-block;
   transition: transform 0.18s ease, filter 0.18s ease;
