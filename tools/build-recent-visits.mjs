@@ -46,13 +46,18 @@ async function main() {
   if (buf.length > 1 && buf[0] === 0x1f && buf[1] === 0x8b) buf = zlib.gunzipSync(buf);
   const text = buf.toString('utf8').trim();
   console.log('download bytes=' + buf.length + ' textlen=' + text.length);
+  console.log('HEAD=' + text.slice(0, 400).replace(/\n/g, '\\n'));
   if (!text) bail('empty export');
 
-  // 4) parse — JSON array, {hits:[...]}, or newline-delimited JSON
+  // 4) parse — JSON array, {hits:[...]}/{visits:[...]}, or newline-delimited JSON
   let arr = [];
   try {
     const j = JSON.parse(text);
-    arr = Array.isArray(j) ? j : (j.hits || j.rows || []);
+    if (Array.isArray(j)) arr = j;
+    else if (j && typeof j === 'object') {
+      const k = Object.keys(j).find((key) => Array.isArray(j[key]));
+      arr = k ? j[k] : [];
+    }
   } catch {
     arr = text.split(/\r?\n/).filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
   }
