@@ -19,6 +19,7 @@ document.querySelectorAll('.pub-teaser--video').forEach(function (wrap) {
 if (typeof window.initVisitorGlobe === 'function') {
   window.initVisitorGlobe(
     document.getElementById('visitor-globe'),
-    document.getElementById('visitor-caption')
+    document.getElementById('visitor-caption'),
+    'visitors.html'
   );
 }

@@ -60,17 +60,35 @@ a:hover { text-decoration: underline; }
 .brand__icon { font-size: 18px; }
 .site-nav {
   display: flex;
-  gap: 24px;
+  gap: 30px;
 }
 .site-nav a {
+  position: relative;
   font-size: 14px;
   color: #57534E;
   font-weight: 400;
+  letter-spacing: 0.02em;
+  padding-bottom: 3px;
+  transition: color 0.2s ease;
+}
+/* left→right underline wipe on hover */
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: #C2410C;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.28s cubic-bezier(0.45, 0, 0.15, 1);
 }
 .site-nav a:hover {
   color: #1C1917;
   text-decoration: none;
 }
+.site-nav a:hover::after { transform: scaleX(1); }
 
 /* ============ Page container ============ */
 .page {
@@ -87,12 +105,14 @@ a:hover { text-decoration: underline; }
   margin-bottom: 72px;
 }
 .hero-photo {
-  width: 168px;
-  height: 168px;
-  border-radius: 50%;
+  width: 188px;
+  height: 250px;
+  border-radius: 12px;
   object-fit: cover;
+  object-position: center top;
   flex-shrink: 0;
   background: #f0f0f0;
+  box-shadow: 0 10px 30px -12px rgba(28, 25, 23, 0.28);
 }
 .hero-text { flex: 1; min-width: 0; }
 .hero-text h1 {
@@ -140,23 +160,24 @@ a:hover { text-decoration: underline; }
 /* ============ Section ============ */
 .section { margin-bottom: 64px; scroll-margin-top: 80px; }
 .section h2 {
-  font-family: 'Instrument Sans', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #44403C;
-  margin: 0 0 22px;
+  font-family: 'Hedvig Letters Serif', Georgia, serif;
+  font-weight: 500;
+  font-size: 25px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #1C1917;
+  margin: 0 0 24px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
-/* Short accent bar in front of section labels */
+/* Refined fading accent rule in front of section titles */
 .section h2::before {
   content: "";
-  width: 16px;
-  height: 2px;
-  background: #C2410C;
+  width: 30px;
+  height: 1.5px;
+  background: linear-gradient(90deg, #C2410C, rgba(194, 65, 12, 0));
+  border-radius: 1px;
   flex-shrink: 0;
 }
 
@@ -401,6 +422,7 @@ a:hover { text-decoration: underline; }
   margin: 0 auto;
 }
 .visitor-globe canvas { display: block; margin: 0 auto; cursor: grab; }
+.visitor-globe.is-clickable canvas { cursor: pointer; }
 .visitor-caption {
   margin: 2px 0 0;
   min-height: 1.25em;
@@ -409,32 +431,6 @@ a:hover { text-decoration: underline; }
   text-align: center;
 }
 .visitor-caption b { color: #C2410C; font-weight: 600; }
-.visitor-more {
-  font-size: 0.84rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: #C2410C;
-  border-bottom: 1px solid transparent;
-  transition: border-bottom-color 0.2s ease;
-}
-.visitor-more:hover { border-bottom-color: #C2410C; }
-.visitor-badge {
-  display: inline-block;
-  transition: transform 0.18s ease, filter 0.18s ease;
-}
-.visitor-badge:hover {
-  transform: translateY(-1px);
-  filter: drop-shadow(0 4px 10px rgba(194, 65, 12, 0.25));
-}
-.visitor-badge img {
-  display: block;
-  height: 20px;
-  width: auto;
-  border-radius: 3px;
-  opacity: 0.85;
-  transition: opacity 0.18s ease;
-}
-.visitor-badge:hover img { opacity: 1; }
 
 /* ============ Footer ============ */
 .footer {

@@ -1,7 +1,7 @@
 /* ============================================================================
- * visitors.html dashboard — fetches stats via GCClient and renders a
- * GoatCounter-style dashboard (Totals, Pages, Top referrers, Browsers,
- * Systems, Locations, Sizes) with the same pink horizontal bars.
+ * visitors.html dashboard — fetches stats via GCClient and renders a minimal,
+ * elegant ranking dashboard (Totals, Locations, Top referrers, Browsers,
+ * Systems, Sizes) — serif numbers + hairline dividers, no colored bars.
  * ========================================================================== */
 (function () {
   var root = document.getElementById('gc-dash');
@@ -52,7 +52,6 @@
     GCClient.all(state.period).then(function (d) {
       body.innerHTML =
         widget('Totals', totalsHtml(d.hits), 'full') +
-        widget('Pages', pagesHtml(d.hits), 'full') +
         '<div class="gc-grid">' +
           widget('Locations', rowsHtml(d.locations.stats)) +
           widget('Top referrers', rowsHtml(d.toprefs.stats)) +
@@ -86,23 +85,17 @@
     });
     var days = Object.keys(byDay).sort().map(function (k) { return { day: k, v: byDay[k] }; });
     var max = days.reduce(function (a, d) { return Math.max(a, d.v); }, 1);
-    var spark = days.length
+    var active = days.filter(function (d) { return d.v > 0; }).length;
+    // Only show a (subtle) sparkline when there's enough shape to be worth it.
+    var spark = active >= 2
       ? '<div class="gc-spark">' + days.map(function (d) {
-          var h = Math.max(2, Math.round((d.v / max) * 64));
+          var h = Math.max(2, Math.round((d.v / max) * 40));
           return '<div class="gc-day" title="' + esc(d.day) + ': ' + d.v + '" style="height:' + h + 'px"></div>';
         }).join('') + '</div>' +
         '<div class="gc-spark-axis"><span>' + esc(days[0].day) + '</span><span>' + esc(days[days.length - 1].day) + '</span></div>'
       : '';
     return '<div class="gc-summary"><span class="gc-big">' + n.toLocaleString() +
       '</span><span class="gc-big-label">' + (n === 1 ? 'visit' : 'visits') + '</span></div>' + spark;
-  }
-
-  // Pages: top paths (show the PATH as the label, like GoatCounter).
-  function pagesHtml(hits) {
-    var rows = (hits.hits || []).map(function (h) {
-      return { name: h.path, count: h.count || 0, link: h.path };
-    });
-    return rowsHtml(rows);
   }
 
   // Friendly labels for breakdowns whose API `name` is empty (e.g. sizes).
@@ -113,23 +106,20 @@
     return s.id || '(unknown)';
   }
 
-  // Generic GoatCounter-style horizontal bar rows.
+  // Minimal ranking rows — no colored bars: name (left) · faint % · serif count (right).
   function rowsHtml(stats) {
     var data = (stats || []).filter(function (s) { return (s.count || 0) > 0; });
     if (!data.length) return '<div class="gc-empty">Nothing to display</div>';
-    var max = data.reduce(function (a, s) { return Math.max(a, s.count || 0); }, 1);
     var sum = data.reduce(function (a, s) { return a + (s.count || 0); }, 0) || 1;
     var rows = data.map(function (s) {
       var count = s.count || 0;
-      var w = Math.max(2, Math.round((count / max) * 100));
       var perc = Math.round((count / sum) * 100);
       var label = s.link
         ? '<a href="https://lorenzo-0-0.github.io' + esc(s.link) + '" target="_blank" rel="noopener">' + esc(s.name || s.link) + '</a>'
         : esc(niceName(s));
       return '<div class="gc-row">' +
+        '<span class="gc-label">' + label + '</span>' +
         '<span class="gc-perc">' + perc + '%</span>' +
-        '<span class="gc-name"><span class="gc-bar" style="width:' + w + '%"></span>' +
-        '<span class="gc-label">' + label + '</span></span>' +
         '<span class="gc-count">' + count.toLocaleString() + '</span>' +
         '</div>';
     }).join('');

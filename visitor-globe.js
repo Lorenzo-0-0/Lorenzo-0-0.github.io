@@ -4,12 +4,29 @@
  * realistic earth-texture globe. Vendored assets only (globe.gl + local data),
  * so the only runtime third-party call is the GoatCounter stats API.
  *
- * window.initVisitorGlobe(globeEl, captionEl) — lazy-loads when in view.
+ * window.initVisitorGlobe(globeEl, captionEl, linkUrl) — lazy-loads when in view.
+ * If linkUrl is given, a tap on the globe navigates there (a rotate-drag won't).
  * ========================================================================== */
-window.initVisitorGlobe = function (el, caption) {
+window.initVisitorGlobe = function (el, caption, linkUrl) {
   if (!el) return;
   var started = false;
   var ACCENT = '#C2410C';
+
+  // Tap-to-navigate (only on a tap, not a rotate-drag).
+  if (linkUrl) {
+    el.classList.add('is-clickable');
+    el.style.cursor = 'pointer';
+    el.setAttribute('title', 'View full analytics');
+    var dn = null;
+    el.addEventListener('pointerdown', function (e) { dn = { x: e.clientX, y: e.clientY, t: Date.now() }; });
+    el.addEventListener('pointerup', function (e) {
+      if (!dn) return;
+      var moved = Math.abs(e.clientX - dn.x) + Math.abs(e.clientY - dn.y);
+      var quick = Date.now() - dn.t < 400;
+      dn = null;
+      if (moved < 6 && quick) window.location.href = linkUrl;
+    });
+  }
 
   function loadScript(src) {
     return new Promise(function (resolve, reject) {

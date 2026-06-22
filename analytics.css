@@ -1,63 +1,56 @@
 /* ============================================================================
- * Visitor analytics dashboard — replicates the GoatCounter dashboard look.
- * Bar palette adapted from GoatCounter (github.com/arp242/goatcounter,
- * public/vars.css — ISC license): fill #fdecfe, border #f5aafb, hover #f9cffc.
+ * Visitor analytics dashboard — minimal, elegant ranking lists (NO colored bars).
+ * Matches the homepage porcelain / serif / burnt-orange theme.
  * ========================================================================== */
 .gc-dash { margin-top: 4px; }
 
-/* period toggle */
-.gc-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 30px; flex-wrap: wrap; }
-.gc-controls .gc-ctrl-label { font-size: 13px; color: #78716C; margin-right: 2px; }
+/* period toggle — minimal text toggles (active = burnt-orange underline) */
+.gc-controls { display: flex; gap: 20px; align-items: baseline; margin-bottom: 34px; flex-wrap: wrap; }
+.gc-controls .gc-ctrl-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #A8A29E; margin-right: 2px; }
 .gc-period {
-  font-size: 13px; font-weight: 600; color: #57534E;
-  padding: 5px 13px; border: 1px solid #E7E5E4; border-radius: 999px;
-  background: #fff; cursor: pointer; transition: all 0.15s ease;
+  font-size: 14px; color: #78716C; background: none; border: none; padding: 2px 0; cursor: pointer;
+  border-bottom: 1.5px solid transparent; transition: color 0.15s ease, border-color 0.15s ease;
 }
-.gc-period:hover { border-color: #C2410C; color: #C2410C; }
-.gc-period.is-active { background: #C2410C; border-color: #C2410C; color: #fff; }
+.gc-period:hover { color: #1C1917; }
+.gc-period.is-active { color: #C2410C; border-bottom-color: #C2410C; }
 
-/* totals summary + per-day sparkline */
+/* totals — big serif number + subtle stone sparkline */
 .gc-summary { display: flex; align-items: baseline; gap: 10px; }
-.gc-summary .gc-big { font-family: 'Hedvig Letters Serif', Georgia, serif; font-size: 40px; color: #1C1917; line-height: 1; }
-.gc-summary .gc-big-label { font-size: 14px; color: #78716C; }
-.gc-spark { display: flex; align-items: flex-end; gap: 2px; height: 64px; margin: 16px 0 4px; }
-.gc-spark .gc-day { flex: 1 1 0; background: #fdecfe; border: 1px solid #f5aafb; border-bottom: none; border-radius: 3px 3px 0 0; min-height: 2px; transition: background 0.15s ease; }
-.gc-spark .gc-day:hover { background: #f9cffc; }
-.gc-spark-axis { display: flex; justify-content: space-between; font-size: 11px; color: #A8A29E; }
+.gc-summary .gc-big { font-family: 'Hedvig Letters Serif', Georgia, serif; font-size: 46px; color: #1C1917; line-height: 1; }
+.gc-summary .gc-big-label { font-size: 14px; color: #A8A29E; }
+.gc-spark { display: flex; align-items: flex-end; gap: 2px; height: 44px; margin: 18px 0 4px; max-width: 520px; }
+.gc-spark .gc-day { flex: 1 1 0; background: #E7E0D6; border-radius: 2px 2px 0 0; min-height: 2px; transition: background 0.15s ease; }
+.gc-spark .gc-day:hover { background: #C2410C; }
+.gc-spark-axis { display: flex; justify-content: space-between; font-size: 11px; color: #C2C0BC; max-width: 520px; }
 
 /* widget grid */
-.gc-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 44px; }
+.gc-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 56px; margin-top: 10px; }
 .gc-widget { min-width: 0; }
 .gc-widget--full { grid-column: 1 / -1; }
 .gc-widget h3 {
-  font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 13px;
-  letter-spacing: 0.08em; text-transform: uppercase; color: #44403C; margin: 0 0 16px;
-  display: flex; align-items: center; gap: 8px;
+  font-family: 'Hedvig Letters Serif', Georgia, serif; font-weight: 500; font-size: 18px;
+  color: #1C1917; margin: 0 0 12px;
 }
-.gc-widget h3::before { content: ""; width: 14px; height: 2px; background: #C2410C; flex-shrink: 0; }
 
-/* horizontal bar rows (GoatCounter .hchart structure) */
-.gc-rows { display: flex; flex-direction: column; gap: 7px; }
-.gc-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #3A3432; }
-.gc-row .gc-perc { width: 40px; text-align: right; color: #A8A29E; font-size: 12px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
-.gc-row .gc-name { position: relative; flex: 1 1 auto; min-width: 0; height: 25px; display: flex; align-items: center; }
-.gc-row .gc-bar { position: absolute; left: 0; top: 0; bottom: 0; background: #fdecfe; border: 1px solid #f5aafb; border-radius: 5px; transition: background 0.15s ease; }
-.gc-row:hover .gc-bar { background: #f9cffc; }
-.gc-row .gc-label { position: relative; z-index: 1; padding: 0 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+/* minimal ranking rows: name · faint % · serif count, hairline divider */
+.gc-rows { display: flex; flex-direction: column; }
+.gc-row { display: flex; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid #EFEDEA; font-size: 14.5px; color: #3A3432; }
+.gc-row:last-child { border-bottom: none; }
+.gc-row .gc-label { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gc-row .gc-label a { color: #3A3432; }
 .gc-row .gc-label a:hover { color: #C2410C; }
-.gc-row .gc-count { width: 56px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; color: #57534E; }
-.gc-foot { font-size: 12px; color: #A8A29E; margin-top: 12px; }
-.gc-empty { font-size: 13px; color: #A8A29E; padding: 4px 0; }
+.gc-row .gc-perc { flex-shrink: 0; width: 42px; text-align: right; font-size: 12px; color: #C2C0BC; font-variant-numeric: tabular-nums; }
+.gc-row .gc-count { flex-shrink: 0; width: 50px; text-align: right; font-family: 'Hedvig Letters Serif', Georgia, serif; font-size: 17px; color: #1C1917; font-variant-numeric: tabular-nums; }
+.gc-empty { font-size: 13.5px; color: #A8A29E; padding: 6px 0; }
 
 /* states */
 .gc-state { padding: 18px 0; color: #57534E; font-size: 14.5px; line-height: 1.6; }
 .gc-state code { background: #f0eeec; padding: 1.5px 6px; border-radius: 4px; font-size: 12.5px; font-family: ui-monospace, Menlo, monospace; }
-.gc-state b { color: #C2410C; }
+.gc-state b, .gc-state a { color: #C2410C; }
 .gc-state ol { margin: 10px 0 0; padding-left: 20px; }
 .gc-state li { margin: 4px 0; }
 
 /* the light-blue globe atop the analytics page */
-.gc-globe-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 44px; }
+.gc-globe-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 48px; }
 
-@media (max-width: 768px) { .gc-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .gc-grid { grid-template-columns: 1fr; gap: 30px; } }
