@@ -28,6 +28,7 @@ function splitCSV(line) {
 
 function parse(text) {
   const lines = text.split(/\r?\n/).filter((l) => l.length);
+  console.log('CSV lines=' + lines.length + ' header=' + (lines[0] || '').slice(0, 200));
   if (lines.length < 2) return [];
   const head = splitCSV(lines[0]).map((h) => h.trim().toLowerCase());
   const ix = (k) => head.indexOf(k);
