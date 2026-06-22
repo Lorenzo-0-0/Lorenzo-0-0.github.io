@@ -86,28 +86,39 @@
       '<h3>' + esc(title) + '</h3>' + inner + '</div>';
   }
 
-  // Recent individual visits (time · country · device). Source: data/recent-visits.json,
-  // refreshed hourly by a GitHub Action (the export API is too rate-limited to call
-  // from the browser). Widget hides itself if the file is empty/missing.
+  // Recent individual visits (time · place · device). Source: the visitor-log
+  // Worker (/recent) backed by Cloudflare D1. Redacted by design — IP is stored
+  // owner-only and never returned here. Widget hides itself if empty/unconfigured.
+  var COUNTRY = (function () {
+    try { return new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { return null; }
+  })();
+  function countryName(cc) {
+    if (!cc) return '';
+    if (COUNTRY) { try { return COUNTRY.of(cc.toUpperCase()) || cc; } catch (e) {} }
+    return cc;
+  }
   function renderRecent() {
-    fetch('data/recent-visits.json?cb=' + Date.now())
+    var base = (window.VISITOR_WORKER_URL || '').replace(/\/+$/, '');
+    var wrap = document.getElementById('gc-recent-widget');
+    if (!base || /YOUR-SUBDOMAIN/.test(base)) { if (wrap) wrap.remove(); return; }
+    fetch(base + '/recent?limit=30')
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (rows) {
         var holder = document.getElementById('gc-recent');
-        var wrap = document.getElementById('gc-recent-widget');
         if (!rows || !rows.length) { if (wrap) wrap.remove(); return; }
         holder.innerHTML = '<div class="gc-rows">' + rows.map(function (r) {
           var cc = (r.country || '').slice(0, 2);
-          var dev = [r.browser, r.system].filter(Boolean).join(' · ');
+          var place = [r.city, countryName(cc)].filter(Boolean).join(', ') || '—';
+          var dev = [r.browser, r.os].filter(Boolean).join(' · ');
           return '<div class="gc-row">' +
-            '<span class="gc-label">' + (flag(cc) ? flag(cc) + ' ' : '') + esc(r.country || '—') +
+            '<span class="gc-label">' + (flag(cc) ? flag(cc) + ' ' : '') + esc(place) +
               (dev ? ' <span class="gc-sub">' + esc(dev) + '</span>' : '') + '</span>' +
-            '<span class="gc-time">' + esc(relTime(r.date)) + '</span>' +
+            '<span class="gc-time">' + esc(relTime(r.ts)) + '</span>' +
             '</div>';
         }).join('') + '</div>' +
-          '<p class="gc-foot">Per-visit time · country · device. IP and city aren’t shown — GoatCounter doesn’t store them.</p>';
+          '<p class="gc-foot">Per-visit time · place · device, from the edge. IP is logged privately and never shown here.</p>';
       })
-      .catch(function () { var wrap = document.getElementById('gc-recent-widget'); if (wrap) wrap.remove(); });
+      .catch(function () { if (wrap) wrap.remove(); });
   }
 
   // Totals: big number + per-day sparkline, DERIVED from /stats/hits

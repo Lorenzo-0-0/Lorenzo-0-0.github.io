@@ -1,5 +1,7 @@
 /* ============================================================================
- * GoatCounter stats client — shared by the homepage globe and visitors.html.
+ * GoatCounter stats client — powers the aggregate dashboard on visitors.html
+ * (Totals / Locations / Browsers / Systems / Sizes / referrers). The per-visit
+ * log + visitor globe now come from the visitor-log Worker, not from here.
  *
  * Reads the site's own visitor stats from the GoatCounter API. The API sends
  * `access-control-allow-origin: *`, so a static page can call it directly with
@@ -102,44 +104,6 @@ window.GCClient = (function () {
         return o;
       });
       function tag(k) { return function (v) { v.__k = k; return v; }; }
-    },
-
-    // NOTE: recent per-visit rows are NOT fetched client-side — the GoatCounter
-    // export API is too rate-limited. A GitHub Action (tools/build-recent-visits.mjs)
-    // exports hourly into data/recent-visits.json, which analytics.js reads directly.
-
-    // Aggregate GoatCounter location rows into globe points keyed by COUNTRY.
-    // loc.id may be ISO-3166-2 ("SG" or "SG-01"); loc.name is "Singapore".
-    // `ref` = the parsed data/country-centroids.json ({centroids, names}).
-    toPoints: function (locStats, ref) {
-      var byCountry = {};
-      (locStats || []).forEach(function (loc) {
-        var iso2 = null;
-        if (loc.id) iso2 = String(loc.id).split('-')[0].toUpperCase();
-        if (!iso2 || !ref.centroids[iso2]) {
-          var alias = ref.names[String(loc.name || '').toLowerCase()];
-          if (alias) iso2 = alias;
-        }
-        if (!iso2 || !ref.centroids[iso2]) return; // unmappable (e.g. "(unknown)")
-        if (!byCountry[iso2]) byCountry[iso2] = { iso2: iso2, name: countryName(ref, iso2, loc.name), count: 0 };
-        byCountry[iso2].count += (loc.count || 0);
-      });
-      return Object.keys(byCountry).map(function (k) {
-        var c = byCountry[k];
-        var ll = ref.centroids[k];
-        return { lat: ll[0], lng: ll[1], count: c.count, name: c.name, iso2: k };
-      });
     }
   };
-
-  function countryName(ref, iso2, fallback) {
-    // Reverse the names alias map for a clean country label.
-    var keys = Object.keys(ref.names);
-    for (var i = 0; i < keys.length; i++) {
-      if (ref.names[keys[i]] === iso2) {
-        return keys[i].replace(/\b\w/g, function (m) { return m.toUpperCase(); });
-      }
-    }
-    return fallback || iso2;
-  }
 })();

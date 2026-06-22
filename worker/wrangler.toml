@@ -1,0 +1,13 @@
+name = "visitor-log"
+main = "src/index.js"
+compatibility_date = "2025-05-01"
+
+# After `wrangler d1 create visitor-log`, paste the printed database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "visitor-log"
+database_id = "4751ac91-8c7d-4f9b-8696-12678bab0be3"
+
+[vars]
+# The site origin allowed to read the public endpoints / send beacons.
+ALLOW_ORIGIN = "https://lorenzo-0-0.github.io"

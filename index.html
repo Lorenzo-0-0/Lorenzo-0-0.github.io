@@ -318,8 +318,8 @@
     <section class="section visitor-section" id="visitors">
       <h2>Visitors</h2>
       <!-- Clean light-blue globe (vendored globe.gl + local datasets) plotting real
-           visitor-location dots from GoatCounter. Built by visitor-globe.js. -->
-      <!-- Tap the globe to open the full analytics page (wired in visitor-globe.js). -->
+           visitor coordinates from the visitor-log Worker (/points). Built by
+           visitor-globe.js. Tap the globe to open the full analytics page. -->
       <div id="visitor-globe" class="visitor-globe" role="img" aria-label="Rotating globe of visitor locations — tap for full analytics"></div>
       <p id="visitor-caption" class="visitor-caption"></p>
       <a class="visitor-badge" href="https://hits.sh/lorenzo-0-0.github.io/" target="_blank" rel="noopener" aria-label="Visitor count">
@@ -333,8 +333,9 @@
     </footer>
 
   </main>
-  <script src="gc-client.js?v=3" defer></script>
-  <script src="visitor-globe.js?v=2" defer></script>
+  <script src="visitor-config.js?v=1" defer></script>
+  <script src="visitor-beacon.js?v=1" defer></script>
+  <script src="visitor-globe.js?v=3" defer></script>
   <script src="script.js?v=28" defer></script>
   <!-- GoatCounter: real, owner-side analytics (free, open-source, maintained).
        Records every pageview with country/city/referrer/path for review at
