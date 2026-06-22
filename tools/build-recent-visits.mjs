@@ -42,10 +42,15 @@ function parse(text) {
 
 async function main() {
   if (!TOKEN) bail('no GOATCOUNTER_TOKEN');
-  // 1) start export
-  const r = await fetch(BASE + '/export', { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: '{}' });
+  // 1) start export — try with an empty JSON body, then with no body if 400.
+  let r = await fetch(BASE + '/export', { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: '{}' });
+  if (r.status === 400) {
+    const b1 = await r.text().catch(() => '');
+    console.log('export 400 with {} body :: ' + b1.slice(0, 200) + ' — retrying with no body');
+    r = await fetch(BASE + '/export', { method: 'POST', headers: H });
+  }
   if (r.status === 429) bail('export rate-limited (429)');
-  if (!r.ok) bail('export start HTTP ' + r.status);
+  if (!r.ok) { const b = await r.text().catch(() => ''); bail('export start HTTP ' + r.status + ' :: ' + b.slice(0, 200)); }
   const { id } = await r.json();
   if (!id) bail('no export id');
   // 2) poll
