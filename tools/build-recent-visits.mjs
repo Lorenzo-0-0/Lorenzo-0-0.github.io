@@ -1,9 +1,9 @@
-// Build data/recent-visits.json from the GoatCounter export API.
+// Build data/recent-visits.json from the GoatCounter JSON export API.
 // Run by .github/workflows/recent-visits.yml on a schedule (NOT client-side —
 // the export API is heavily rate-limited, so a single periodic job is the only
 // viable source). Token comes from the GOATCOUNTER_TOKEN Actions secret.
 // Output rows: { date, country, browser, system } (newest first). No IP/city —
-// GoatCounter doesn't store them.
+// GoatCounter doesn't expose them in exports.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 
@@ -13,65 +13,64 @@ const OUT = 'data/recent-visits.json';
 const LIMIT = 15;
 const H = { Authorization: 'Bearer ' + TOKEN };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
 function bail(msg) { console.log(msg + ' — keeping existing ' + OUT); process.exit(0); }
-
-function splitCSV(line) {
-  const out = []; let cur = '', q = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (q) { if (ch === '"') { if (line[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
-    else { if (ch === ',') { out.push(cur); cur = ''; } else if (ch === '"') q = true; else cur += ch; }
-  }
-  out.push(cur); return out;
-}
-
-function parse(text) {
-  const lines = text.split(/\r?\n/).filter((l) => l.length);
-  console.log('CSV lines=' + lines.length + ' header=' + (lines[0] || '').slice(0, 200));
-  if (lines.length < 2) return [];
-  const head = splitCSV(lines[0]).map((h) => h.trim().toLowerCase());
-  const ix = (k) => head.indexOf(k);
-  const di = ix('date'), li = ix('location'), bi = ix('browser'), si = ix('system');
-  const rows = lines.slice(1).map((l) => {
-    const c = splitCSV(l);
-    return { date: di >= 0 ? c[di] : '', country: li >= 0 ? (c[li] || '').slice(0, 2) : '', browser: bi >= 0 ? c[bi] : '', system: si >= 0 ? c[si] : '' };
-  }).filter((r) => r.date);
-  rows.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  return rows.slice(0, LIMIT);
-}
 
 async function main() {
   if (!TOKEN) bail('no GOATCOUNTER_TOKEN');
-  // 1) start export (the API requires a "format")
-  const r = await fetch(BASE + '/export', { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: JSON.stringify({ format: 'csv' }) });
+  // 1) start a JSON export covering a wide date range (start_from_day).
+  const since = new Date(Date.now() - 180 * 864e5).toISOString();
+  const r = await fetch(BASE + '/export', {
+    method: 'POST', headers: { ...H, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ format: 'json', start_from_day: since })
+  });
   if (r.status === 429) bail('export rate-limited (429)');
   if (!r.ok) { const b = await r.text().catch(() => ''); bail('export start HTTP ' + r.status + ' :: ' + b.slice(0, 200)); }
-  const startBody = await r.json();
-  const id = startBody.id;
-  console.log('export start ok :: ' + JSON.stringify(startBody).slice(0, 200));
+  const id = (await r.json()).id;
   if (!id) bail('no export id');
-  // 2) poll
-  let done = false, meta = null;
+
+  // 2) poll until finished
+  let meta = null;
   for (let i = 0; i < 20; i++) {
     await sleep(2000);
     const s = await (await fetch(BASE + '/export/' + id, { headers: H })).json();
     if (s.error) bail('export error: ' + s.error);
-    if (s.finished_at) { meta = s; done = true; break; }
+    if (s.finished_at) { meta = s; break; }
   }
-  if (!done) bail('export timed out');
-  console.log('export meta :: ' + JSON.stringify(meta).slice(0, 250));
-  // 3) download (+gunzip) + parse
+  if (!meta) bail('export timed out');
+  console.log('export meta :: num_rows=' + meta.num_rows + ' format=' + meta.format);
+
+  // 3) download (+gunzip)
   const dl = await fetch(BASE + '/export/' + id + '/download', { headers: H });
-  console.log('download :: HTTP ' + dl.status + ' ct=' + dl.headers.get('content-type'));
   if (!dl.ok) bail('download HTTP ' + dl.status);
   let buf = Buffer.from(await dl.arrayBuffer());
-  console.log('download bytes=' + buf.length + ' gzip=' + (buf.length > 1 && buf[0] === 0x1f && buf[1] === 0x8b));
   if (buf.length > 1 && buf[0] === 0x1f && buf[1] === 0x8b) buf = zlib.gunzipSync(buf);
-  const rows = parse(buf.toString('utf8'));
-  if (!rows.length) bail('parsed 0 rows');
-  fs.writeFileSync(OUT, JSON.stringify(rows));
-  console.log('wrote ' + rows.length + ' rows to ' + OUT);
+  const text = buf.toString('utf8').trim();
+  console.log('download bytes=' + buf.length + ' textlen=' + text.length);
+  if (!text) bail('empty export');
+
+  // 4) parse — JSON array, {hits:[...]}, or newline-delimited JSON
+  let arr = [];
+  try {
+    const j = JSON.parse(text);
+    arr = Array.isArray(j) ? j : (j.hits || j.rows || []);
+  } catch {
+    arr = text.split(/\r?\n/).filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+  }
+  console.log('parsed ' + arr.length + ' rows; firstKeys=' + (arr[0] ? Object.keys(arr[0]).join(',') : 'none'));
+  if (!arr.length) bail('0 rows in export');
+
+  const rows = arr.map((h) => ({
+    date: h.created_at || h.date || '',
+    country: String(h.location || '').slice(0, 2),
+    browser: h.browser || '',
+    system: h.system || '',
+    ua: h.user_agent || ''
+  })).filter((x) => x.date);
+  rows.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const out = rows.slice(0, LIMIT);
+  if (!out.length) bail('no dated rows');
+  fs.writeFileSync(OUT, JSON.stringify(out));
+  console.log('wrote ' + out.length + ' rows to ' + OUT);
 }
 
 main().catch((e) => bail('error: ' + (e && e.message)));
