@@ -364,46 +364,34 @@ a:hover { text-decoration: underline; }
 }
 
 /* ============ Buttons ============ */
+/* Publication resource buttons — square, burnt-orange (赤橙), no hover effect */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 7px;
+  padding: 8px 16px;
   font-size: 13px;
-  font-weight: 500;
-  color: #44403C;
-  border: 1px solid #E7E5E4;
-  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #C2410C;
+  border: 1px solid #C2410C;
+  border-radius: 0;
   background: #ffffff;
   text-decoration: none;
   line-height: 1.4;
-  transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 .btn svg {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  opacity: 0.62;
-  transition: opacity 0.18s ease;
+  opacity: 0.92;
 }
-.btn:hover {
-  color: #C2410C;
-  border-color: #E8B49C;
-  background: #FDF6F1;
-  text-decoration: none;
-  transform: translateY(-1px);
-  box-shadow: 0 5px 14px -6px rgba(194, 65, 12, 0.35);
-}
-.btn:hover svg { opacity: 1; }
-.btn:active { transform: translateY(0); box-shadow: none; }
-.btn--disabled,
-.btn--disabled:hover {
+.btn:hover { text-decoration: none; }
+.btn--disabled {
   color: #B8B4B0;
-  border-color: #ECEAE8;
+  border-color: #DAD6D2;
   background: #ffffff;
   cursor: default;
-  transform: none;
-  box-shadow: none;
 }
 
 /* ============ Visitor map ============ */
