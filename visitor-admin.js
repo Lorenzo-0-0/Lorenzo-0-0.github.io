@@ -44,8 +44,7 @@
     stopTimer();
     body.innerHTML =
       '<div class="vlog-card vlog-unlock">' +
-        '<h2>Private visitor log</h2>' +
-        '<p class="vlog-hint">Owner only — enter your access key to see full per-visit details, including IP.</p>' +
+        '<h2>Private log</h2>' +
         (msg ? '<p class="vlog-err">' + esc(msg) + '</p>' : '') +
         '<form id="vlog-form" autocomplete="off">' +
           '<input id="vlog-key" type="password" autocomplete="off" spellcheck="false" placeholder="access key" />' +
@@ -109,7 +108,7 @@
     var cc = (data && data.countries) || 0;
     var head =
       '<div class="vlog-head">' +
-        '<div class="vlog-title"><h2>Visitor log <span class="vlog-tag">private</span></h2>' +
+        '<div class="vlog-title"><h2>Private log</h2>' +
           '<p class="vlog-meta"><b>' + total.toLocaleString() + '</b> ' + (total === 1 ? 'visit' : 'visits') +
             ' · <b>' + cc + '</b> ' + (cc === 1 ? 'country' : 'countries') +
             ' · updated ' + esc(nowTime()) + '</p></div>' +
