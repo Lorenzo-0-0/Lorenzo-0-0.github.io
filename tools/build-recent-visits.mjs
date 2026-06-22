@@ -47,22 +47,27 @@ async function main() {
   const r = await fetch(BASE + '/export', { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: JSON.stringify({ format: 'csv' }) });
   if (r.status === 429) bail('export rate-limited (429)');
   if (!r.ok) { const b = await r.text().catch(() => ''); bail('export start HTTP ' + r.status + ' :: ' + b.slice(0, 200)); }
-  const { id } = await r.json();
+  const startBody = await r.json();
+  const id = startBody.id;
+  console.log('export start ok :: ' + JSON.stringify(startBody).slice(0, 200));
   if (!id) bail('no export id');
   // 2) poll
-  let done = false;
+  let done = false, meta = null;
   for (let i = 0; i < 20; i++) {
     await sleep(2000);
     const s = await (await fetch(BASE + '/export/' + id, { headers: H })).json();
     if (s.error) bail('export error: ' + s.error);
-    if (s.finished_at) { done = true; break; }
+    if (s.finished_at) { meta = s; done = true; break; }
   }
   if (!done) bail('export timed out');
+  console.log('export meta :: ' + JSON.stringify(meta).slice(0, 250));
   // 3) download (+gunzip) + parse
   const dl = await fetch(BASE + '/export/' + id + '/download', { headers: H });
+  console.log('download :: HTTP ' + dl.status + ' ct=' + dl.headers.get('content-type'));
   if (!dl.ok) bail('download HTTP ' + dl.status);
   let buf = Buffer.from(await dl.arrayBuffer());
-  if (buf[0] === 0x1f && buf[1] === 0x8b) buf = zlib.gunzipSync(buf);
+  console.log('download bytes=' + buf.length + ' gzip=' + (buf.length > 1 && buf[0] === 0x1f && buf[1] === 0x8b));
+  if (buf.length > 1 && buf[0] === 0x1f && buf[1] === 0x8b) buf = zlib.gunzipSync(buf);
   const rows = parse(buf.toString('utf8'));
   if (!rows.length) bail('parsed 0 rows');
   fs.writeFileSync(OUT, JSON.stringify(rows));
