@@ -1,8 +1,10 @@
 /* ============================================================================
  * Visitor globe — self-hosted, clean light-blue rotating earth (globe.gl) with
- * real visitor-location dots from the visitor-log Worker (/points). Coords are
- * rounded + aggregated server-side. Vendored assets only (globe.gl + local data),
- * so the only runtime third-party call is the Worker on *.workers.dev.
+ * per-COUNTRY visitor dots. Count + locations come from GoatCounter (via
+ * GCClient), so the globe is always consistent with the Visitor Analytics
+ * dashboard. Dots are placed at country centroids (data/country-centroids.json),
+ * never a precise location — the precise per-visit log is private (owner panel).
+ * Vendored assets only (globe.gl + local datasets).
  *
  * window.initVisitorGlobe(globeEl, captionEl, linkUrl) — lazy-loads when in view.
  * If linkUrl is given, a tap on the globe navigates there (a rotate-drag won't).
@@ -48,9 +50,11 @@ window.initVisitorGlobe = function (el, caption, linkUrl) {
 
     Promise.all([
       loadScript('assets/globe.gl.min.js'),
-      getJSON('data/countries.geojson')
+      getJSON('data/countries.geojson'),
+      getJSON('data/country-centroids.json')
     ]).then(function (res) {
       var countries = res[1];
+      var centroids = (res[2] && res[2].centroids) || {};
       var size = Math.min(el.clientWidth || 240, 240);
 
       var world = Globe()(el)
@@ -79,44 +83,61 @@ window.initVisitorGlobe = function (el, caption, linkUrl) {
       c.autoRotateSpeed = 0.7;
       c.enableZoom = false;
 
-      // Real visitor dots from the visitor-log Worker (/points). Coords are
-      // rounded server-side (~11 km) and aggregated, so no pinpoint locations.
-      var base = (window.VISITOR_WORKER_URL || '').replace(/\/+$/, '');
-      if (base && !/YOUR-SUBDOMAIN/.test(base)) {
-        getJSON(base + '/points').then(function (data) {
-          var pts = (data && data.points) || [];
-          if (!pts.length) { setCaption(0, 0); return; }
-          var max = pts.reduce(function (a, p) { return Math.max(a, p.count); }, 1);
+      drawFromGoatCounter(world, centroids);
+    }).catch(function () { /* asset failure — leave section empty, don't break page */ });
+  }
 
-          world.pointsData(pts)
-            .pointLat('lat').pointLng('lng')
-            .pointColor(function () { return ACCENT; })
-            .pointAltitude(function (d) { return 0.04 + (d.count / max) * 0.22; })
-            .pointRadius(function (d) { return 0.28 + (d.count / max) * 0.45; })
-            .pointResolution(12)
-            .pointLabel(function (d) { return d.count + (d.count === 1 ? ' visit' : ' visits'); });
+  // Pull the SAME data the dashboard shows: total from /stats/hits, per-country
+  // breakdown from /stats/locations. Plot a dot at each country's centroid.
+  function drawFromGoatCounter(world, centroids) {
+    if (!window.GCClient || !GCClient.hasToken()) { setCaption(-1, 0); return; }
 
-          // Ripple rings on the busiest clusters for life.
-          var top = pts.slice().sort(function (a, b) { return b.count - a.count; }).slice(0, 6);
-          world.ringsData(top)
-            .ringLat('lat').ringLng('lng')
-            .ringColor(function () { return function (t) { return 'rgba(194,65,12,' + (1 - t) + ')'; }; })
-            .ringMaxRadius(5).ringPropagationSpeed(2.2).ringRepeatPeriod(1000);
+    Promise.all([
+      GCClient.hits('all'),
+      GCClient.breakdown('locations', 'all')
+    ]).then(function (r) {
+      var hits = r[0], loc = r[1];
 
-          setCaption(data.total || 0, data.countries || 0);
-        }).catch(function () { setCaption(-1, 0); });
-      } else {
-        setCaption(-1, 0); // Worker URL not configured yet
+      var total = ((hits && hits.hits) || []).reduce(function (a, h) { return a + (h.count || 0); }, 0);
+
+      var stats = ((loc && loc.stats) || []).filter(function (s) { return (s.count || 0) > 0; });
+      var pts = [];
+      stats.forEach(function (s) {
+        var cc = (s.id || '').toUpperCase();
+        var ll = centroids[cc];
+        if (!ll) return;
+        pts.push({ lat: ll[0], lng: ll[1], count: s.count, name: s.name || cc });
+      });
+
+      if (pts.length) {
+        var max = pts.reduce(function (a, p) { return Math.max(a, p.count); }, 1);
+        world.pointsData(pts)
+          .pointLat('lat').pointLng('lng')
+          .pointColor(function () { return ACCENT; })
+          .pointAltitude(function (d) { return 0.04 + (d.count / max) * 0.22; })
+          .pointRadius(function (d) { return 0.28 + (d.count / max) * 0.45; })
+          .pointResolution(12)
+          .pointLabel(function (d) {
+            return d.name + ': ' + d.count + (d.count === 1 ? ' visit' : ' visits');
+          });
+
+        var top = pts.slice().sort(function (a, b) { return b.count - a.count; }).slice(0, 6);
+        world.ringsData(top)
+          .ringLat('lat').ringLng('lng')
+          .ringColor(function () { return function (t) { return 'rgba(194,65,12,' + (1 - t) + ')'; }; })
+          .ringMaxRadius(5).ringPropagationSpeed(2.2).ringRepeatPeriod(1000);
       }
-    }).catch(function () { /* asset/CDN failure — leave section empty, don't break page */ });
+
+      setCaption(total, stats.length);
+    }).catch(function () { setCaption(-1, 0); });
   }
 
   function setCaption(visits, countries) {
     if (!caption) return;
     if (visits < 0) { caption.innerHTML = '🌍 A globe of where my visitors come from'; return; }
     if (visits === 0) { caption.innerHTML = '🌍 Waiting for the first mapped visitor…'; return; }
-    caption.innerHTML = '🌍 <b>' + visits.toLocaleString() + '</b> visits from <b>' +
-      countries + '</b> ' + (countries === 1 ? 'country' : 'countries');
+    caption.innerHTML = '🌍 <b>' + visits.toLocaleString() + '</b> ' + (visits === 1 ? 'visit' : 'visits') +
+      ' from <b>' + countries + '</b> ' + (countries === 1 ? 'country' : 'countries');
   }
 
   var io = new IntersectionObserver(function (entries) {

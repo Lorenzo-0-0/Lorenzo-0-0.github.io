@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css?v=30" />
-  <link rel="stylesheet" href="analytics.css?v=3" />
+  <link rel="stylesheet" href="analytics.css?v=4" />
 </head>
 <body>
 
@@ -46,17 +46,23 @@
       <div id="gc-dash" class="gc-dash"></div>
     </section>
 
+    <!-- ===== Owner-only private log (revealed by the footer trigger) ===== -->
+    <section class="section vlog" id="vlog" hidden>
+      <div id="vlog-body"></div>
+    </section>
+
     <footer class="footer">
       <span>&copy; Jingliang Li</span>
-      <span>Live data &middot; GoatCounter</span>
+      <span>Live data &middot; GoatCounter<button id="vlog-trigger" class="vlog-trigger" type="button" title="Owner area" aria-label="Owner area">&#9679;</button></span>
     </footer>
 
   </main>
 
   <script src="visitor-config.js?v=1" defer></script>
   <script src="gc-client.js?v=3" defer></script>
-  <script src="visitor-globe.js?v=3" defer></script>
-  <script src="analytics.js?v=5" defer></script>
+  <script src="visitor-globe.js?v=4" defer></script>
+  <script src="analytics.js?v=6" defer></script>
+  <script src="visitor-admin.js?v=1" defer></script>
   <script>
     // build the globe once its module + the client are loaded
     window.addEventListener('DOMContentLoaded', function () {

@@ -20,20 +20,6 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function flag(cc) {
-    if (!cc || cc.length !== 2) return '';
-    return cc.toUpperCase().replace(/./g, function (c) { return String.fromCodePoint(127397 + c.charCodeAt(0)); });
-  }
-  function relTime(iso) {
-    var t = Date.parse(iso); if (isNaN(t)) return iso || '';
-    var s = Math.floor((Date.now() - t) / 1000);
-    if (s < 60) return s + 's ago';
-    var m = Math.floor(s / 60); if (m < 60) return m + 'm ago';
-    var h = Math.floor(m / 60); if (h < 24) return h + 'h ago';
-    var d = Math.floor(h / 24); if (d < 30) return d + 'd ago';
-    return new Date(t).toLocaleDateString();
-  }
-
   if (!window.GCClient || !GCClient.hasToken()) {
     renderNoToken();
     return;
@@ -71,10 +57,7 @@
           widget('Browsers', rowsHtml(d.browsers.stats)) +
           widget('Systems', rowsHtml(d.systems.stats)) +
           widget('Sizes', rowsHtml(d.sizes.stats)) +
-        '</div>' +
-        '<div class="gc-widget gc-widget--full" id="gc-recent-widget"><h3>Recent visits</h3>' +
-          '<div id="gc-recent"><div class="gc-empty">Loading…</div></div></div>';
-      renderRecent();
+        '</div>';
     }).catch(function (e) {
       body.innerHTML = '<div class="gc-state">Couldn’t load stats (' + esc(e.message) +
         '). If this says HTTP 403, the token needs the <b>Read statistics</b> permission.</div>';
@@ -84,41 +67,6 @@
   function widget(title, inner, mod) {
     return '<div class="gc-widget' + (mod === 'full' ? ' gc-widget--full' : '') + '">' +
       '<h3>' + esc(title) + '</h3>' + inner + '</div>';
-  }
-
-  // Recent individual visits (time · place · device). Source: the visitor-log
-  // Worker (/recent) backed by Cloudflare D1. Redacted by design — IP is stored
-  // owner-only and never returned here. Widget hides itself if empty/unconfigured.
-  var COUNTRY = (function () {
-    try { return new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { return null; }
-  })();
-  function countryName(cc) {
-    if (!cc) return '';
-    if (COUNTRY) { try { return COUNTRY.of(cc.toUpperCase()) || cc; } catch (e) {} }
-    return cc;
-  }
-  function renderRecent() {
-    var base = (window.VISITOR_WORKER_URL || '').replace(/\/+$/, '');
-    var wrap = document.getElementById('gc-recent-widget');
-    if (!base || /YOUR-SUBDOMAIN/.test(base)) { if (wrap) wrap.remove(); return; }
-    fetch(base + '/recent?limit=30')
-      .then(function (r) { return r.ok ? r.json() : []; })
-      .then(function (rows) {
-        var holder = document.getElementById('gc-recent');
-        if (!rows || !rows.length) { if (wrap) wrap.remove(); return; }
-        holder.innerHTML = '<div class="gc-rows">' + rows.map(function (r) {
-          var cc = (r.country || '').slice(0, 2);
-          var place = [r.city, countryName(cc)].filter(Boolean).join(', ') || '—';
-          var dev = [r.browser, r.os].filter(Boolean).join(' · ');
-          return '<div class="gc-row">' +
-            '<span class="gc-label">' + (flag(cc) ? flag(cc) + ' ' : '') + esc(place) +
-              (dev ? ' <span class="gc-sub">' + esc(dev) + '</span>' : '') + '</span>' +
-            '<span class="gc-time">' + esc(relTime(r.ts)) + '</span>' +
-            '</div>';
-        }).join('') + '</div>' +
-          '<p class="gc-foot">Per-visit time · place · device, from the edge. IP is logged privately and never shown here.</p>';
-      })
-      .catch(function () { if (wrap) wrap.remove(); });
   }
 
   // Totals: big number + per-day sparkline, DERIVED from /stats/hits

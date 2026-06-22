@@ -8,8 +8,10 @@
  * coordinates.
  *
  *   POST /log              record a visit (sendBeacon target). 204.
- *   GET  /recent?limit=N   newest visits, redacted: {ts,country,city,region,browser,os}
- *   GET  /points           globe data: coords rounded to ~11km, aggregated + counts
+ *   GET  /admin?limit=N    OWNER ONLY — requires `Authorization: Bearer <ADMIN_KEY>`
+ *                          (or ?key=). Returns FULL rows incl. IP. No key set or
+ *                          wrong key => 401. This is the only read endpoint; the
+ *                          per-visit log is never exposed publicly.
  * ========================================================================== */
 
 export default {
@@ -21,8 +23,7 @@ export default {
 
     try {
       if (url.pathname === '/log' && request.method === 'POST') return await handleLog(request, env, cors);
-      if (url.pathname === '/recent' && request.method === 'GET') return await handleRecent(request, env, cors);
-      if (url.pathname === '/points' && request.method === 'GET') return await handlePoints(env, cors);
+      if (url.pathname === '/admin' && request.method === 'GET') return await handleAdmin(request, env, cors);
       if (url.pathname === '/') return json({ ok: true, service: 'visitor-log' }, 200, cors);
       return json({ error: 'not found' }, 404, cors);
     } catch (e) {
@@ -73,32 +74,40 @@ async function handleLog(request, env, cors) {
   return new Response(null, { status: 204, headers: cors });
 }
 
-async function handleRecent(request, env, cors) {
+// OWNER ONLY. Gated by a shared secret (env.ADMIN_KEY, set via
+// `wrangler secret put ADMIN_KEY`). Accepts the key as `Authorization: Bearer <k>`
+// (preferred — stays out of URLs/logs) or `?key=<k>`. Returns the FULL per-visit
+// rows including IP. This is the single read path; nothing here is public.
+async function handleAdmin(request, env, cors) {
   const url = new URL(request.url);
-  let limit = parseInt(url.searchParams.get('limit') || '30', 10);
-  if (!(limit > 0 && limit <= 100)) limit = 30;
+  const bearer = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+  const key = bearer || url.searchParams.get('key') || '';
+  if (!env.ADMIN_KEY || !safeEqual(key, env.ADMIN_KEY)) {
+    return json({ error: 'unauthorized' }, 401, cors);
+  }
+  let limit = parseInt(url.searchParams.get('limit') || '200', 10);
+  if (!(limit > 0 && limit <= 1000)) limit = 200;
   const { results } = await env.DB.prepare(
-    "SELECT ts, country, city, region, browser, os FROM visits ORDER BY ts DESC, id DESC LIMIT ?1"
+    "SELECT id, ts, ip, city, region, country, lat, lng, org, path, referrer, browser, os " +
+    "FROM visits ORDER BY ts DESC, id DESC LIMIT ?1"
   ).bind(limit).all();
-  return json(results || [], 200, cors);
-}
-
-async function handlePoints(env, cors) {
-  // Round coords to 0.1 deg (~11 km) and aggregate — city-ish clusters, never a
-  // pinpoint location, and never the IP.
-  const { results } = await env.DB.prepare(
-    "SELECT ROUND(lat,1) AS lat, ROUND(lng,1) AS lng, COUNT(*) AS count " +
-    "FROM visits WHERE lat IS NOT NULL AND lng IS NOT NULL " +
-    "GROUP BY ROUND(lat,1), ROUND(lng,1)"
-  ).all();
   const meta = await env.DB.prepare(
     "SELECT COUNT(*) AS total, COUNT(DISTINCT country) AS countries FROM visits"
   ).first();
   return json({
-    points: results || [],
+    rows: results || [],
     total: (meta && meta.total) || 0,
     countries: (meta && meta.countries) || 0
   }, 200, cors);
+}
+
+// Length-aware constant-time-ish string compare (avoid early-exit timing leak).
+function safeEqual(a, b) {
+  a = String(a); b = String(b);
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
 }
 
 /* ---------- helpers ---------- */
@@ -135,7 +144,7 @@ function corsHeaders(request, env) {
   return {
     'Access-Control-Allow-Origin': allow,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Vary': 'Origin'
   };
 }
