@@ -86,25 +86,28 @@
       '<h3>' + esc(title) + '</h3>' + inner + '</div>';
   }
 
-  // Recent individual visits (time · country · device) via the export API.
-  // Hidden entirely if unavailable (e.g. the token lacks the Export permission).
+  // Recent individual visits (time · country · device). Source: data/recent-visits.json,
+  // refreshed hourly by a GitHub Action (the export API is too rate-limited to call
+  // from the browser). Widget hides itself if the file is empty/missing.
   function renderRecent() {
-    if (!GCClient.recentVisits) return;
-    GCClient.recentVisits(12).then(function (rows) {
-      var holder = document.getElementById('gc-recent');
-      var wrap = document.getElementById('gc-recent-widget');
-      if (!rows || !rows.length) { if (wrap) wrap.remove(); return; }
-      holder.innerHTML = '<div class="gc-rows">' + rows.map(function (r) {
-        var cc = (r.loc || '').slice(0, 2);
-        var dev = [r.browser, r.system].filter(Boolean).join(' · ');
-        return '<div class="gc-row">' +
-          '<span class="gc-label">' + (flag(cc) ? flag(cc) + ' ' : '') + esc(r.loc || '—') +
-            (dev ? ' <span class="gc-sub">' + esc(dev) + '</span>' : '') + '</span>' +
-          '<span class="gc-time">' + esc(relTime(r.date)) + '</span>' +
-          '</div>';
-      }).join('') + '</div>' +
-        '<p class="gc-foot">Per-visit time · country · device. IP and city aren’t shown — GoatCounter doesn’t store them.</p>';
-    });
+    fetch('data/recent-visits.json?cb=' + Date.now())
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (rows) {
+        var holder = document.getElementById('gc-recent');
+        var wrap = document.getElementById('gc-recent-widget');
+        if (!rows || !rows.length) { if (wrap) wrap.remove(); return; }
+        holder.innerHTML = '<div class="gc-rows">' + rows.map(function (r) {
+          var cc = (r.country || '').slice(0, 2);
+          var dev = [r.browser, r.system].filter(Boolean).join(' · ');
+          return '<div class="gc-row">' +
+            '<span class="gc-label">' + (flag(cc) ? flag(cc) + ' ' : '') + esc(r.country || '—') +
+              (dev ? ' <span class="gc-sub">' + esc(dev) + '</span>' : '') + '</span>' +
+            '<span class="gc-time">' + esc(relTime(r.date)) + '</span>' +
+            '</div>';
+        }).join('') + '</div>' +
+          '<p class="gc-foot">Per-visit time · country · device. IP and city aren’t shown — GoatCounter doesn’t store them.</p>';
+      })
+      .catch(function () { var wrap = document.getElementById('gc-recent-widget'); if (wrap) wrap.remove(); });
   }
 
   // Totals: big number + per-day sparkline, DERIVED from /stats/hits
