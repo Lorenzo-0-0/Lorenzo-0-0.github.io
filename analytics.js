@@ -20,6 +20,19 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  function flag(cc) {
+    if (!cc || cc.length !== 2) return '';
+    return cc.toUpperCase().replace(/./g, function (c) { return String.fromCodePoint(127397 + c.charCodeAt(0)); });
+  }
+  function relTime(iso) {
+    var t = Date.parse(iso); if (isNaN(t)) return iso || '';
+    var s = Math.floor((Date.now() - t) / 1000);
+    if (s < 60) return s + 's ago';
+    var m = Math.floor(s / 60); if (m < 60) return m + 'm ago';
+    var h = Math.floor(m / 60); if (h < 24) return h + 'h ago';
+    var d = Math.floor(h / 24); if (d < 30) return d + 'd ago';
+    return new Date(t).toLocaleDateString();
+  }
 
   if (!window.GCClient || !GCClient.hasToken()) {
     renderNoToken();
@@ -58,7 +71,10 @@
           widget('Browsers', rowsHtml(d.browsers.stats)) +
           widget('Systems', rowsHtml(d.systems.stats)) +
           widget('Sizes', rowsHtml(d.sizes.stats)) +
-        '</div>';
+        '</div>' +
+        '<div class="gc-widget gc-widget--full" id="gc-recent-widget"><h3>Recent visits</h3>' +
+          '<div id="gc-recent"><div class="gc-empty">Loading…</div></div></div>';
+      renderRecent();
     }).catch(function (e) {
       body.innerHTML = '<div class="gc-state">Couldn’t load stats (' + esc(e.message) +
         '). If this says HTTP 403, the token needs the <b>Read statistics</b> permission.</div>';
@@ -68,6 +84,27 @@
   function widget(title, inner, mod) {
     return '<div class="gc-widget' + (mod === 'full' ? ' gc-widget--full' : '') + '">' +
       '<h3>' + esc(title) + '</h3>' + inner + '</div>';
+  }
+
+  // Recent individual visits (time · country · device) via the export API.
+  // Hidden entirely if unavailable (e.g. the token lacks the Export permission).
+  function renderRecent() {
+    if (!GCClient.recentVisits) return;
+    GCClient.recentVisits(12).then(function (rows) {
+      var holder = document.getElementById('gc-recent');
+      var wrap = document.getElementById('gc-recent-widget');
+      if (!rows || !rows.length) { if (wrap) wrap.remove(); return; }
+      holder.innerHTML = '<div class="gc-rows">' + rows.map(function (r) {
+        var cc = (r.loc || '').slice(0, 2);
+        var dev = [r.browser, r.system].filter(Boolean).join(' · ');
+        return '<div class="gc-row">' +
+          '<span class="gc-label">' + (flag(cc) ? flag(cc) + ' ' : '') + esc(r.loc || '—') +
+            (dev ? ' <span class="gc-sub">' + esc(dev) + '</span>' : '') + '</span>' +
+          '<span class="gc-time">' + esc(relTime(r.date)) + '</span>' +
+          '</div>';
+      }).join('') + '</div>' +
+        '<p class="gc-foot">Per-visit time · country · device. IP and city aren’t shown — GoatCounter doesn’t store them.</p>';
+    });
   }
 
   // Totals: big number + per-day sparkline, DERIVED from /stats/hits
