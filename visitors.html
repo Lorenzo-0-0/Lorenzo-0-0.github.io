@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visitors · Jingliang Li</title>
+  <meta name="description" content="Live visitor analytics for Jingliang Li's homepage." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=26" />
+  <link rel="stylesheet" href="analytics.css?v=1" />
+</head>
+<body>
+
+  <!-- ===== Sticky top banner ===== -->
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="index.html#top">
+        <span class="brand__icon" aria-hidden="true">🚀</span>
+        <span class="brand__name">JINGLIANG LI</span>
+      </a>
+      <nav class="site-nav">
+        <a href="index.html#top">Home</a>
+        <a href="index.html#news">News</a>
+        <a href="index.html#publications">Publications</a>
+        <a href="visitors.html">Visitors</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page" id="top">
+
+    <!-- ===== Globe ===== -->
+    <section class="section">
+      <h2>Where my visitors come from</h2>
+      <div class="gc-globe-wrap">
+        <div id="visitor-globe" class="visitor-globe" role="img" aria-label="Rotating globe of visitor locations"></div>
+        <p id="visitor-caption" class="visitor-caption"></p>
+      </div>
+    </section>
+
+    <!-- ===== Dashboard ===== -->
+    <section class="section">
+      <h2>Visitor Analytics</h2>
+      <div id="gc-dash" class="gc-dash"></div>
+    </section>
+
+    <footer class="footer">
+      <span>&copy; Jingliang Li</span>
+      <span>Live data &middot; GoatCounter</span>
+    </footer>
+
+  </main>
+
+  <script src="gc-client.js?v=1" defer></script>
+  <script src="visitor-globe.js?v=1" defer></script>
+  <script src="analytics.js?v=1" defer></script>
+  <script>
+    // build the globe once its module + the client are loaded
+    window.addEventListener('DOMContentLoaded', function () {
+      if (typeof window.initVisitorGlobe === 'function') {
+        window.initVisitorGlobe(document.getElementById('visitor-globe'), document.getElementById('visitor-caption'));
+      }
+    });
+  </script>
+  <!-- GoatCounter tracking (count this page too) -->
+  <script data-goatcounter="https://jingliangli.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

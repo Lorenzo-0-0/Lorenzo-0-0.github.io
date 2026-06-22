@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=24" />
+  <link rel="stylesheet" href="style.css?v=26" />
 </head>
 <body>
 
@@ -24,6 +24,7 @@
         <a href="#top">Home</a>
         <a href="#news">News</a>
         <a href="#publications">Publications</a>
+        <a href="visitors.html">Visitors</a>
       </nav>
     </div>
   </header>
@@ -317,11 +318,11 @@
     <!-- ===== Visitor map ===== -->
     <section class="section visitor-section" id="visitors">
       <h2>Visitors</h2>
-      <!-- Self-hosted 3D globe (globe.gl + geojs.io). Replaces the dead ClustrMaps/
-           MapMyVisitors widgets — those services shut down or stopped recording.
-           This is fully client-side, no domain-lock, no account, cannot silently die. -->
-      <div id="visitor-globe" class="visitor-globe" role="img" aria-label="Rotating globe highlighting the visitor's location"></div>
+      <!-- Clean light-blue globe (vendored globe.gl + local datasets) plotting real
+           visitor-location dots from GoatCounter. Built by visitor-globe.js. -->
+      <div id="visitor-globe" class="visitor-globe" role="img" aria-label="Rotating globe of visitor locations"></div>
       <p id="visitor-caption" class="visitor-caption"></p>
+      <a class="visitor-more" href="visitors.html">View full analytics &rarr;</a>
       <a class="visitor-badge" href="https://hits.sh/lorenzo-0-0.github.io/" target="_blank" rel="noopener" aria-label="Visitor count">
         <img src="https://hits.sh/lorenzo-0-0.github.io.svg?style=flat-square&label=visits&color=D6BFA5&labelColor=A8A29E" alt="Visitor count" loading="lazy" />
       </a>
@@ -333,7 +334,9 @@
     </footer>
 
   </main>
-  <script src="script.js?v=26" defer></script>
+  <script src="gc-client.js?v=1" defer></script>
+  <script src="visitor-globe.js?v=1" defer></script>
+  <script src="script.js?v=27" defer></script>
   <!-- GoatCounter: real, owner-side analytics (free, open-source, maintained).
        Records every pageview with country/city/referrer/path for review at
        https://jingliangli.goatcounter.com (login required). Counts nothing

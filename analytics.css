@@ -1,0 +1,63 @@
+/* ============================================================================
+ * Visitor analytics dashboard — replicates the GoatCounter dashboard look.
+ * Bar palette adapted from GoatCounter (github.com/arp242/goatcounter,
+ * public/vars.css — ISC license): fill #fdecfe, border #f5aafb, hover #f9cffc.
+ * ========================================================================== */
+.gc-dash { margin-top: 4px; }
+
+/* period toggle */
+.gc-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 30px; flex-wrap: wrap; }
+.gc-controls .gc-ctrl-label { font-size: 13px; color: #78716C; margin-right: 2px; }
+.gc-period {
+  font-size: 13px; font-weight: 600; color: #57534E;
+  padding: 5px 13px; border: 1px solid #E7E5E4; border-radius: 999px;
+  background: #fff; cursor: pointer; transition: all 0.15s ease;
+}
+.gc-period:hover { border-color: #C2410C; color: #C2410C; }
+.gc-period.is-active { background: #C2410C; border-color: #C2410C; color: #fff; }
+
+/* totals summary + per-day sparkline */
+.gc-summary { display: flex; align-items: baseline; gap: 10px; }
+.gc-summary .gc-big { font-family: 'Hedvig Letters Serif', Georgia, serif; font-size: 40px; color: #1C1917; line-height: 1; }
+.gc-summary .gc-big-label { font-size: 14px; color: #78716C; }
+.gc-spark { display: flex; align-items: flex-end; gap: 2px; height: 64px; margin: 16px 0 4px; }
+.gc-spark .gc-day { flex: 1 1 0; background: #fdecfe; border: 1px solid #f5aafb; border-bottom: none; border-radius: 3px 3px 0 0; min-height: 2px; transition: background 0.15s ease; }
+.gc-spark .gc-day:hover { background: #f9cffc; }
+.gc-spark-axis { display: flex; justify-content: space-between; font-size: 11px; color: #A8A29E; }
+
+/* widget grid */
+.gc-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 44px; }
+.gc-widget { min-width: 0; }
+.gc-widget--full { grid-column: 1 / -1; }
+.gc-widget h3 {
+  font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 13px;
+  letter-spacing: 0.08em; text-transform: uppercase; color: #44403C; margin: 0 0 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.gc-widget h3::before { content: ""; width: 14px; height: 2px; background: #C2410C; flex-shrink: 0; }
+
+/* horizontal bar rows (GoatCounter .hchart structure) */
+.gc-rows { display: flex; flex-direction: column; gap: 7px; }
+.gc-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #3A3432; }
+.gc-row .gc-perc { width: 40px; text-align: right; color: #A8A29E; font-size: 12px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.gc-row .gc-name { position: relative; flex: 1 1 auto; min-width: 0; height: 25px; display: flex; align-items: center; }
+.gc-row .gc-bar { position: absolute; left: 0; top: 0; bottom: 0; background: #fdecfe; border: 1px solid #f5aafb; border-radius: 5px; transition: background 0.15s ease; }
+.gc-row:hover .gc-bar { background: #f9cffc; }
+.gc-row .gc-label { position: relative; z-index: 1; padding: 0 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.gc-row .gc-label a { color: #3A3432; }
+.gc-row .gc-label a:hover { color: #C2410C; }
+.gc-row .gc-count { width: 56px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; color: #57534E; }
+.gc-foot { font-size: 12px; color: #A8A29E; margin-top: 12px; }
+.gc-empty { font-size: 13px; color: #A8A29E; padding: 4px 0; }
+
+/* states */
+.gc-state { padding: 18px 0; color: #57534E; font-size: 14.5px; line-height: 1.6; }
+.gc-state code { background: #f0eeec; padding: 1.5px 6px; border-radius: 4px; font-size: 12.5px; font-family: ui-monospace, Menlo, monospace; }
+.gc-state b { color: #C2410C; }
+.gc-state ol { margin: 10px 0 0; padding-left: 20px; }
+.gc-state li { margin: 4px 0; }
+
+/* the light-blue globe atop the analytics page */
+.gc-globe-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 44px; }
+
+@media (max-width: 768px) { .gc-grid { grid-template-columns: 1fr; } }

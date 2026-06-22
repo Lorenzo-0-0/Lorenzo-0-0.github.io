@@ -395,8 +395,8 @@ a:hover { text-decoration: underline; }
 }
 .visitor-section h2 { align-self: flex-start; margin-bottom: 0; }
 .visitor-globe {
-  width: 280px;
-  height: 280px;
+  width: 240px;
+  height: 240px;
   max-width: 100%;
   margin: 0 auto;
 }
@@ -409,6 +409,15 @@ a:hover { text-decoration: underline; }
   text-align: center;
 }
 .visitor-caption b { color: #C2410C; font-weight: 600; }
+.visitor-more {
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #C2410C;
+  border-bottom: 1px solid transparent;
+  transition: border-bottom-color 0.2s ease;
+}
+.visitor-more:hover { border-bottom-color: #C2410C; }
 .visitor-badge {
   display: inline-block;
   transition: transform 0.18s ease, filter 0.18s ease;
