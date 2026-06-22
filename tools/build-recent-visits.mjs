@@ -1,9 +1,9 @@
-// Build data/recent-visits.json from the GoatCounter JSON export API.
+// Build data/recent-visits.json from the GoatCounter CSV export API.
 // Run by .github/workflows/recent-visits.yml on a schedule (NOT client-side —
-// the export API is heavily rate-limited, so a single periodic job is the only
-// viable source). Token comes from the GOATCOUNTER_TOKEN Actions secret.
-// Output rows: { date, country, browser, system } (newest first). No IP/city —
-// GoatCounter doesn't expose them in exports.
+// the export API is heavily rate-limited). Token from the GOATCOUNTER_TOKEN secret.
+// CSV export returns a single .csv.gz; start_from_hit_id:0 exports ALL hits
+// (omitting it defaults to "newest only" → 0 rows). Output rows:
+// { date, country, browser, system }. No IP/city — not in GoatCounter exports.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 
@@ -15,20 +15,29 @@ const H = { Authorization: 'Bearer ' + TOKEN };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function bail(msg) { console.log(msg + ' — keeping existing ' + OUT); process.exit(0); }
 
+function splitCSV(line) {
+  const out = []; let cur = '', q = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (q) { if (ch === '"') { if (line[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+    else { if (ch === ',') { out.push(cur); cur = ''; } else if (ch === '"') q = true; else cur += ch; }
+  }
+  out.push(cur); return out;
+}
+
 async function main() {
   if (!TOKEN) bail('no GOATCOUNTER_TOKEN');
-  // 1) start a JSON export covering a wide date range (start_from_day).
-  const since = new Date(Date.now() - 180 * 864e5).toISOString();
+  // 1) start CSV export of ALL hits (start_from_hit_id:0)
   const r = await fetch(BASE + '/export', {
     method: 'POST', headers: { ...H, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ format: 'json', start_from_day: since })
+    body: JSON.stringify({ format: 'csv', start_from_hit_id: 0 })
   });
   if (r.status === 429) bail('export rate-limited (429)');
   if (!r.ok) { const b = await r.text().catch(() => ''); bail('export start HTTP ' + r.status + ' :: ' + b.slice(0, 200)); }
   const id = (await r.json()).id;
   if (!id) bail('no export id');
 
-  // 2) poll until finished
+  // 2) poll
   let meta = null;
   for (let i = 0; i < 20; i++) {
     await sleep(2000);
@@ -37,43 +46,34 @@ async function main() {
     if (s.finished_at) { meta = s; break; }
   }
   if (!meta) bail('export timed out');
-  console.log('export meta :: num_rows=' + meta.num_rows + ' format=' + meta.format);
+  console.log('export meta :: num_rows=' + meta.num_rows + ' size=' + meta.size);
 
-  // 3) download (+gunzip)
+  // 3) download (.csv.gz → gunzip)
   const dl = await fetch(BASE + '/export/' + id + '/download', { headers: H });
   if (!dl.ok) bail('download HTTP ' + dl.status);
   let buf = Buffer.from(await dl.arrayBuffer());
   if (buf.length > 1 && buf[0] === 0x1f && buf[1] === 0x8b) buf = zlib.gunzipSync(buf);
   const text = buf.toString('utf8').trim();
-  console.log('download bytes=' + buf.length + ' textlen=' + text.length);
-  console.log('HEAD=' + text.slice(0, 400).replace(/\n/g, '\\n'));
-  if (!text) bail('empty export');
+  const lines = text.split(/\r?\n/).filter((l) => l.length);
+  console.log('CSV lines=' + lines.length + ' header=' + (lines[0] || '').slice(0, 160));
+  if (lines.length < 2) bail('CSV had no data rows');
 
-  // 4) parse — JSON array, {hits:[...]}/{visits:[...]}, or newline-delimited JSON
-  let arr = [];
-  try {
-    const j = JSON.parse(text);
-    if (Array.isArray(j)) arr = j;
-    else if (j && typeof j === 'object') {
-      const k = Object.keys(j).find((key) => Array.isArray(j[key]));
-      arr = k ? j[k] : [];
-    }
-  } catch {
-    arr = text.split(/\r?\n/).filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
-  }
-  console.log('parsed ' + arr.length + ' rows; firstKeys=' + (arr[0] ? Object.keys(arr[0]).join(',') : 'none'));
-  if (!arr.length) bail('0 rows in export');
-
-  const rows = arr.map((h) => ({
-    date: h.created_at || h.date || '',
-    country: String(h.location || '').slice(0, 2),
-    browser: h.browser || '',
-    system: h.system || '',
-    ua: h.user_agent || ''
-  })).filter((x) => x.date);
+  // 4) parse (header-mapped)
+  const head = splitCSV(lines[0]).map((h) => h.trim().toLowerCase());
+  const ix = (k) => head.indexOf(k);
+  const di = ix('date'), li = ix('location'), bi = ix('browser'), si = ix('system');
+  const rows = lines.slice(1).map((l) => {
+    const c = splitCSV(l);
+    return {
+      date: di >= 0 ? c[di] : '',
+      country: li >= 0 ? (c[li] || '').slice(0, 2) : '',
+      browser: bi >= 0 ? c[bi] : '',
+      system: si >= 0 ? c[si] : ''
+    };
+  }).filter((x) => x.date);
   rows.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   const out = rows.slice(0, LIMIT);
-  if (!out.length) bail('no dated rows');
+  if (!out.length) bail('parsed 0 dated rows');
   fs.writeFileSync(OUT, JSON.stringify(out));
   console.log('wrote ' + out.length + ' rows to ' + OUT);
 }
