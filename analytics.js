@@ -60,7 +60,7 @@
         '</div>';
     }).catch(function (e) {
       body.innerHTML = '<div class="gc-state">Couldn’t load stats (' + esc(e.message) +
-        '). If this says HTTP 403, the token needs the <b>Read statistics</b> permission.</div>';
+        '). The stats proxy may be briefly unavailable — try again in a minute.</div>';
     });
   }
 

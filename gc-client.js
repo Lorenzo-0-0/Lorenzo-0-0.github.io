@@ -3,24 +3,21 @@
  * (Totals / Locations / Browsers / Systems / Sizes / referrers). The per-visit
  * log + visitor globe now come from the visitor-log Worker, not from here.
  *
- * Reads the site's own visitor stats from the GoatCounter API. The API sends
- * `access-control-allow-origin: *`, so a static page can call it directly with
- * a READ-ONLY token (scope: "Read statistics" only). The token can read stats
- * and nothing else — if ever abused, regenerate it in GoatCounter → API.
+ * Reads the site's own visitor stats via the visitor-log Worker's /gc proxy.
+ * The page used to call the GoatCounter API directly with a bearer token, but
+ * GoatCounter dropped the `Access-Control-Allow-Origin` header from /api/v0
+ * (mid-2026): the CORS preflight gets no Allow-* headers back and every fetch
+ * dies with "Failed to fetch". The Worker now forwards whitelisted stats reads
+ * with the token held server-side (GC_TOKEN secret) — no token in this page.
  * ========================================================================== */
 window.GCClient = (function () {
-  var BASE = 'https://jingliangli.goatcounter.com/api/v0';
+  var BASE = (window.VISITOR_WORKER_URL || 'https://visitor-log.jingliangli.workers.dev')
+    .replace(/\/+$/, '') + '/gc';
 
-  // GoatCounter API token. NOTE: this is a full-access token, used here at the
-  // owner's explicit choice (they accepted the risk that a public token could be
-  // misused). To harden later: create a token with only "Read statistics" and
-  // regenerate this one in GoatCounter → API.
-  // Public, STATS-ONLY token (read statistics scope) — safe to ship in the page.
-  // The export-capable token lives only in the GOATCOUNTER_TOKEN Actions secret.
-  var TOKEN = '1f30uzneth5f71a8cdtm3tbz5e13fk192u7fspq1xt8ogl8ggw9g';
-
+  // Kept for callers (analytics.js / visitor-globe.js gate on it). Auth now
+  // lives in the Worker, so the client is always "configured".
   function hasToken() {
-    return TOKEN && TOKEN !== 'PASTE_READ_ONLY_TOKEN' && TOKEN.length > 8;
+    return true;
   }
 
   // ISO-8601 rounded to the hour (GoatCounter expects hour-rounded bounds).
@@ -33,7 +30,10 @@ window.GCClient = (function () {
     if (period === 'week') start.setDate(start.getDate() - 7);
     else if (period === 'month') start.setDate(start.getDate() - 30);
     else if (period === 'year') start.setFullYear(start.getFullYear() - 1);
-    else start = new Date('2020-01-01T00:00:00Z'); // "all"
+    // "all": the GoatCounter site has no data before 2026 (account created
+    // mid-2026); starting at 2020 made /stats/hits return ~14 MB of zero-filled
+    // hourly series. 2026-01-01 keeps every real hit and cuts it to ~1 MB.
+    else start = new Date('2026-01-01T00:00:00Z');
     return { start: iso(start), end: iso(end) };
   }
 
@@ -45,8 +45,9 @@ window.GCClient = (function () {
   var chain = Promise.resolve(); // serialization queue
   var cache = {};                // url -> promise
 
+  // Plain GET, no custom headers → a CORS "simple request", no preflight.
   function rawGet(url, attempt) {
-    return fetch(url, { headers: { 'Authorization': 'Bearer ' + TOKEN } }).then(function (res) {
+    return fetch(url).then(function (res) {
       if (res.status === 429 && attempt < MAX_RETRY) {
         var reset = parseFloat(res.headers.get('X-Rate-Limit-Reset')) || 1;
         return new Promise(function (r) { setTimeout(r, (reset + 0.25) * 1000); })

@@ -10,8 +10,13 @@
  *   POST /log              record a visit (sendBeacon target). 204.
  *   GET  /admin?limit=N    OWNER ONLY — requires `Authorization: Bearer <ADMIN_KEY>`
  *                          (or ?key=). Returns FULL rows incl. IP. No key set or
- *                          wrong key => 401. This is the only read endpoint; the
- *                          per-visit log is never exposed publicly.
+ *                          wrong key => 401. This is the only read endpoint for
+ *                          the per-visit log; it is never exposed publicly.
+ *   GET  /gc/stats/<kind>  read-only proxy to the GoatCounter stats API for the
+ *                          public dashboard/globe. GoatCounter dropped CORS from
+ *                          /api/v0 (mid-2026), so the page can't call it directly
+ *                          any more; this forwards whitelisted aggregate reads
+ *                          with the token held server-side (env.GC_TOKEN).
  * ========================================================================== */
 
 export default {
@@ -24,6 +29,7 @@ export default {
     try {
       if (url.pathname === '/log' && request.method === 'POST') return await handleLog(request, env, cors);
       if (url.pathname === '/admin' && request.method === 'GET') return await handleAdmin(request, env, cors);
+      if (url.pathname.indexOf('/gc/stats/') === 0 && request.method === 'GET') return await handleStats(request, env, cors, url);
       if (url.pathname === '/') return json({ ok: true, service: 'visitor-log' }, 200, cors);
       return json({ error: 'not found' }, 404, cors);
     } catch (e) {
@@ -99,6 +105,53 @@ async function handleAdmin(request, env, cors) {
     total: (meta && meta.total) || 0,
     countries: (meta && meta.countries) || 0
   }, 200, cors);
+}
+
+// Read-only GoatCounter stats proxy. Only whitelisted aggregate endpoints are
+// reachable — never the per-visit export or any write API — so exposing this
+// publicly leaks nothing beyond what the dashboard already shows. The token
+// stays server-side (`wrangler secret put GC_TOKEN`); responses are edge-cached
+// for 5 min so page loads don't chew the GoatCounter rate limit.
+var GC_BASE = 'https://jingliangli.goatcounter.com/api/v0/stats/';
+var GC_KINDS = ['total', 'hits', 'browsers', 'systems', 'locations', 'languages', 'sizes', 'toprefs', 'campaigns'];
+
+async function handleStats(request, env, cors, url) {
+  var kind = url.pathname.slice('/gc/stats/'.length);
+  if (GC_KINDS.indexOf(kind) === -1) return json({ error: 'unknown stat' }, 404, cors);
+  if (!env.GC_TOKEN) return json({ error: 'stats proxy not configured' }, 500, cors);
+
+  var qs = new URLSearchParams();
+  ['start', 'end', 'limit', 'offset', 'daily'].forEach(function (k) {
+    var v = url.searchParams.get(k);
+    if (v) qs.set(k, v);
+  });
+  var upstream = GC_BASE + kind + (qs.toString() ? '?' + qs.toString() : '');
+
+  var cacheKey = new Request(upstream); // token is never part of the cache key
+  var hit = await caches.default.match(cacheKey);
+  if (hit) return withCors(hit, cors);
+
+  var r = await fetch(upstream, { headers: { 'Authorization': 'Bearer ' + env.GC_TOKEN } });
+  var body = await r.text();
+  var headers = {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': r.ok ? 'public, max-age=300' : 'no-store'
+  };
+  // pass the reset hint through so the client's 429 backoff keeps working
+  var reset = r.headers.get('X-Rate-Limit-Reset');
+  if (reset) headers['X-Rate-Limit-Reset'] = reset;
+
+  var resp = new Response(body, { status: r.status, headers: headers });
+  if (r.ok) await caches.default.put(cacheKey, resp.clone());
+  return withCors(resp, cors);
+}
+
+// CORS headers vary per Origin, so cached responses are stored bare and the
+// per-request headers are stamped on the way out.
+function withCors(resp, cors) {
+  var out = new Response(resp.body, resp);
+  for (var k in cors) out.headers.set(k, cors[k]);
+  return out;
 }
 
 // Length-aware constant-time-ish string compare (avoid early-exit timing leak).
