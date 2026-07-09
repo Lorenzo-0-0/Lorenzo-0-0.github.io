@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jingliang Li</title>
   <meta name="description" content="Jingliang Li — PhD student at Nanyang Technological University. Research in robotics and multimodal large language models." />
+  <link rel="canonical" href="https://jingliangli.com/" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -333,7 +334,7 @@
     </footer>
 
   </main>
-  <script src="visitor-config.js?v=1" defer></script>
+  <script src="visitor-config.js?v=2" defer></script>
   <script src="visitor-beacon.js?v=1" defer></script>
   <script src="gc-client.js?v=4" defer></script>
   <script src="visitor-globe.js?v=4" defer></script>
@@ -342,7 +343,11 @@
        Records every pageview with country/city/referrer/path for review at
        https://jingliangli.goatcounter.com (login required). Counts nothing
        until that account/code is registered — harmless no-op before then. -->
+  <!-- count.js is SELF-HOSTED (assets/count.js): gc.zgo.at rides Netlify, which
+       is slow/flaky from mainland China and sits on adblock lists. The count
+       endpoint itself (jingliangli.goatcounter.com, Hetzner) is DNS-clean from
+       China. Re-vendor occasionally: curl -o assets/count.js https://gc.zgo.at/count.js -->
   <script data-goatcounter="https://jingliangli.goatcounter.com/count"
-          async src="//gc.zgo.at/count.js"></script>
+          async src="assets/count.js?v=1"></script>
 </body>
 </html>

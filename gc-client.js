@@ -11,7 +11,7 @@
  * with the token held server-side (GC_TOKEN secret) — no token in this page.
  * ========================================================================== */
 window.GCClient = (function () {
-  var BASE = (window.VISITOR_WORKER_URL || 'https://visitor-log.jingliangli.workers.dev')
+  var BASE = (window.VISITOR_WORKER_URL || 'https://stats.jingliangli.com')
     .replace(/\/+$/, '') + '/gc';
 
   // Kept for callers (analytics.js / visitor-globe.js gate on it). Auth now

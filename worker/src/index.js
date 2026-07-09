@@ -206,7 +206,8 @@ function isAllowed(origin, env) {
   if (env.ALLOW_ORIGIN && origin === env.ALLOW_ORIGIN) return true;
   try {
     var h = new URL(origin).hostname;
-    return /\.github\.io$/.test(h) || h === 'localhost' || h === '127.0.0.1';
+    return /\.github\.io$/.test(h) || h === 'jingliangli.com' || h === 'www.jingliangli.com' ||
+      h === 'localhost' || h === '127.0.0.1';
   } catch (_) { return false; }
 }
 

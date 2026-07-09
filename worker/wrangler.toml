@@ -2,6 +2,16 @@ name = "visitor-log"
 main = "src/index.js"
 compatibility_date = "2025-05-01"
 
+# Custom domain: *.workers.dev is GFW-blocked in mainland China (DNS pollution,
+# since 2022), so the beacon/analytics endpoints live on our own domain instead.
+# Cloudflare auto-creates the DNS record + cert for this on deploy.
+routes = [
+  { pattern = "stats.jingliangli.com", custom_domain = true }
+]
+# Keep the workers.dev route alive too — the old URL stays as a fallback and
+# the site keeps working during the domain transition.
+workers_dev = true
+
 # After `wrangler d1 create visitor-log`, paste the printed database_id below.
 [[d1_databases]]
 binding = "DB"
@@ -10,4 +20,6 @@ database_id = "4751ac91-8c7d-4f9b-8696-12678bab0be3"
 
 [vars]
 # The site origin allowed to read the public endpoints / send beacons.
-ALLOW_ORIGIN = "https://lorenzo-0-0.github.io"
+# (isAllowed() in src/index.js additionally allows *.github.io, the
+# jingliangli.com apex/www, and localhost.)
+ALLOW_ORIGIN = "https://jingliangli.com"
