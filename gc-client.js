@@ -74,17 +74,38 @@ window.GCClient = (function () {
     return p;
   }
 
+  // Breakdown endpoints support limit (max 100) + offset and set `more` when
+  // truncated — follow the pagination so lists NEVER silently cap. (The old
+  // hard limit=15 froze the globe at "15 countries" and dropped the dots for
+  // every country past the top 15 once the real list outgrew it.)
+  function paged(path, period, key) {
+    function step(offset, acc) {
+      var extra = 'limit=100' + (offset ? '&offset=' + offset : '');
+      return get(path, period, extra).then(function (d) {
+        var arr = (d && d[key]) || [];
+        acc = acc.concat(arr);
+        if (d && d.more && arr.length) return step(offset + arr.length, acc);
+        var out = {};
+        out[key] = acc;
+        out.more = false;
+        return out;
+      });
+    }
+    return step(0, []);
+  }
+
   return {
     hasToken: hasToken,
 
     // Total visitors + daily series for the period.
     total: function (period) { return get('/stats/total', period); },
 
-    // Top pages.
-    hits: function (period) { return get('/stats/hits', period, 'limit=15'); },
+    // Pages. /stats/hits rejects `offset` (unlike the breakdowns), so this is
+    // one max-size page — complete while the site has under 100 paths.
+    hits: function (period) { return get('/stats/hits', period, 'limit=100'); },
 
     // One breakdown: kind in {locations, browsers, systems, sizes, toprefs, languages}.
-    breakdown: function (kind, period) { return get('/stats/' + kind, period, 'limit=15'); },
+    breakdown: function (kind, period) { return paged('/stats/' + kind, period, 'stats'); },
 
     // Fetch everything for the dashboard, batched to respect the rate limit.
     // NOTE: /stats/total is flaky (intermittent HTTP 400) — Totals is derived

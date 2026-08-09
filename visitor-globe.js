@@ -61,6 +61,9 @@ window.initVisitorGlobe = function (el, caption, linkUrl) {
         .width(size).height(size)
         .backgroundColor('rgba(0,0,0,0)')
         .globeImageUrl(null)                 // no photo texture — flat color
+        // Faint lat/lng grid so ocean-facing rotation phases still read as a
+        // deliberate map, not a blank/broken ball.
+        .showGraticules(true)
         .showAtmosphere(true)
         .atmosphereColor('#acd6ef')
         .atmosphereAltitude(0.2)
@@ -68,7 +71,9 @@ window.initVisitorGlobe = function (el, caption, linkUrl) {
         .hexPolygonResolution(3)
         .hexPolygonMargin(0.32)
         .hexPolygonUseDots(true)
-        .hexPolygonColor(function () { return 'rgba(54,110,170,0.55)'; });
+        // Strong enough to read at 240px even mid-rotation over open ocean —
+        // at the old 0.55 alpha the Pacific face looked like a blank ball.
+        .hexPolygonColor(function () { return 'rgba(38,88,148,0.8)'; });
 
       // Recolor the ocean sphere to a clean light blue (mutate existing material,
       // no THREE constructor needed since globe.gl bundles its own three.js).
@@ -87,20 +92,16 @@ window.initVisitorGlobe = function (el, caption, linkUrl) {
     }).catch(function () { /* asset failure — leave section empty, don't break page */ });
   }
 
-  // Pull the SAME data the dashboard shows: total from /stats/hits, per-country
-  // breakdown from /stats/locations. Plot a dot at each country's centroid.
+  // Pull the SAME data the dashboard shows. The complete /stats/locations
+  // breakdown (gc-client follows the API pagination) is the single source:
+  // its counts sum to the dashboard total, and its length is the REAL country
+  // count — not the length of a truncated top-N list.
   function drawFromGoatCounter(world, centroids) {
     if (!window.GCClient || !GCClient.hasToken()) { setCaption(-1, 0); return; }
 
-    Promise.all([
-      GCClient.hits('all'),
-      GCClient.breakdown('locations', 'all')
-    ]).then(function (r) {
-      var hits = r[0], loc = r[1];
-
-      var total = ((hits && hits.hits) || []).reduce(function (a, h) { return a + (h.count || 0); }, 0);
-
+    GCClient.breakdown('locations', 'all').then(function (loc) {
       var stats = ((loc && loc.stats) || []).filter(function (s) { return (s.count || 0) > 0; });
+      var total = stats.reduce(function (a, s) { return a + (s.count || 0); }, 0);
       var pts = [];
       stats.forEach(function (s) {
         var cc = (s.id || '').toUpperCase();
@@ -111,11 +112,15 @@ window.initVisitorGlobe = function (el, caption, linkUrl) {
 
       if (pts.length) {
         var max = pts.reduce(function (a, p) { return Math.max(a, p.count); }, 1);
+        // Low, wide pucks — visitor markers sitting ON the map. The old tall
+        // thin needles (altitude up to 0.26) read as rendering glitches when
+        // one poked past the silhouette mid-rotation. sqrt keeps 1-visit
+        // countries visible next to the top ones.
         world.pointsData(pts)
           .pointLat('lat').pointLng('lng')
           .pointColor(function () { return ACCENT; })
-          .pointAltitude(function (d) { return 0.04 + (d.count / max) * 0.22; })
-          .pointRadius(function (d) { return 0.28 + (d.count / max) * 0.45; })
+          .pointAltitude(function (d) { return 0.015 + Math.sqrt(d.count / max) * 0.045; })
+          .pointRadius(function (d) { return 0.45 + Math.sqrt(d.count / max) * 0.85; })
           .pointResolution(12)
           .pointLabel(function (d) {
             return d.name + ': ' + d.count + (d.count === 1 ? ' visit' : ' visits');
