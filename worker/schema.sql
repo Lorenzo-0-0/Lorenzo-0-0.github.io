@@ -14,8 +14,12 @@ CREATE TABLE IF NOT EXISTS visits (
   path      TEXT,
   referrer  TEXT,
   browser   TEXT,
-  os        TEXT
+  os        TEXT,
+  bot       INTEGER NOT NULL DEFAULT 0  -- 1 = crawler/automation (UA-detected); still counted
 );
+-- Existing deployments migrate with:
+--   wrangler d1 execute visitor-log --remote --command \
+--     "ALTER TABLE visits ADD COLUMN bot INTEGER NOT NULL DEFAULT 0"
 
 CREATE INDEX IF NOT EXISTS idx_visits_ts ON visits (ts);
 CREATE INDEX IF NOT EXISTS idx_visits_ip_path_ts ON visits (ip, path, ts);

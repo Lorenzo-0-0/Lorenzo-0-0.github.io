@@ -134,13 +134,13 @@
       var cc = (r.country || '').slice(0, 2);
       var loc = [r.city, r.region, countryName(cc)].filter(Boolean).join(', ') || '—';
       var coord = (r.lat != null && r.lng != null) ? (round(r.lat) + ', ' + round(r.lng)) : '';
-      return '<tr>' +
+      return '<tr' + (r.bot ? ' class="vlog-bot"' : '') + '>' +
         '<td class="vlog-time"><span class="vlog-abs">' + esc(localTime(r.ts)) + '</span>' +
           '<span class="vlog-rel">' + esc(relTime(r.ts)) + '</span></td>' +
         '<td>' + (flag(cc) ? flag(cc) + ' ' : '') + esc(loc) +
           (coord ? '<span class="vlog-coord">' + esc(coord) + '</span>' : '') + '</td>' +
         '<td class="vlog-ip">' + esc(r.ip || '—') + '</td>' +
-        '<td>' + esc(r.org || '—') + '</td>' +
+        '<td>' + (r.bot ? '<span class="vlog-badge" title="Automated crawler (identified by User-Agent); still counted in totals">🤖 bot</span>' : '') + esc(r.org || '—') + '</td>' +
         '<td class="vlog-path">' + esc(r.path || '—') + '</td>' +
         '<td class="vlog-ref">' + esc(r.referrer || '—') + '</td>' +
         '<td>' + esc([r.browser, r.os].filter(Boolean).join(' · ') || '—') + '</td>' +

@@ -111,6 +111,15 @@
 .vlog-table tr:last-child td { border-bottom: none; }
 .vlog-table tr:hover td { background: #F7F4F0; }
 
+/* bot rows: flagged (badge + muted), never excluded from counts */
+.vlog-bot td { opacity: 0.62; }
+.vlog-bot:hover td { opacity: 1; }
+.vlog-badge {
+  display: inline-block; margin: 0 6px 2px 0; padding: 1px 7px; border-radius: 999px;
+  background: #F3EEE9; border: 1px solid #E2D9CF; font-size: 10.5px; font-weight: 600;
+  letter-spacing: 0.03em; color: #8A7F76; white-space: nowrap;
+}
+
 .vlog-time { white-space: nowrap; }
 .vlog-abs { display: block; font-variant-numeric: tabular-nums; }
 .vlog-rel { display: block; font-size: 11px; color: #C2C0BC; margin-top: 1px; }

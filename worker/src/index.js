@@ -48,7 +48,9 @@ async function handleLog(request, env, cors) {
   try { body = JSON.parse((await request.text()) || '{}'); } catch (_) { body = {}; }
   const path = cap(body.path, 200) || '/';
   const referrer = cap(body.referrer, 300);
-  const { browser, os } = parseUA(request.headers.get('User-Agent') || '');
+  const ua = request.headers.get('User-Agent') || '';
+  const { browser, os } = parseUA(ua);
+  const bot = isBot(ua) ? 1 : 0;
 
   // Dedup / rate-limit: skip if this IP already hit this path in the last 30 min.
   // Kills reload double-counting AND throttles beacon flooding from one source.
@@ -60,9 +62,11 @@ async function handleLog(request, env, cors) {
     if (dup) return new Response(null, { status: 204, headers: cors });
   }
 
+  // Bots are flagged, not dropped — they still count toward totals; the flag
+  // only drives the 🤖 badge in the owner log.
   await env.DB.prepare(
-    "INSERT INTO visits (ip, city, region, country, lat, lng, org, path, referrer, browser, os) " +
-    "VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)"
+    "INSERT INTO visits (ip, city, region, country, lat, lng, org, path, referrer, browser, os, bot) " +
+    "VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12)"
   ).bind(
     ip || null,
     cf.city || null,
@@ -74,7 +78,8 @@ async function handleLog(request, env, cors) {
     path,
     referrer || null,
     browser,
-    os
+    os,
+    bot
   ).run();
 
   return new Response(null, { status: 204, headers: cors });
@@ -94,7 +99,7 @@ async function handleAdmin(request, env, cors) {
   let limit = parseInt(url.searchParams.get('limit') || '200', 10);
   if (!(limit > 0 && limit <= 1000)) limit = 200;
   const { results } = await env.DB.prepare(
-    "SELECT id, ts, ip, city, region, country, lat, lng, org, path, referrer, browser, os " +
+    "SELECT id, ts, ip, city, region, country, lat, lng, org, path, referrer, browser, os, bot " +
     "FROM visits ORDER BY ts DESC, id DESC LIMIT ?1"
   ).bind(limit).all();
   const meta = await env.DB.prepare(
@@ -172,6 +177,15 @@ function cap(v, n) {
 function numOrNull(v) {
   var f = parseFloat(v);
   return isFinite(f) ? f : null;
+}
+
+// Crawler / automation detection by User-Agent. Catches the major search
+// engines (Googlebot, bingbot, Baiduspider-render, YandexBot, Applebot, … —
+// all match "bot" or "spider"), plus headless browsers, uptime monitors and
+// HTTP libraries. UA spoofing evades this, but engines that RENDER JS (the
+// only way to trigger the beacon) identify themselves honestly.
+function isBot(ua) {
+  return /bot|spider|crawl|slurp|headlesschrome|phantomjs|lighthouse|pingdom|uptime|monitor|preview|python-requests|python-urllib|scrapy|httpx|aiohttp|go-http-client|okhttp|curl\/|wget\//i.test(ua || '');
 }
 
 function parseUA(ua) {
