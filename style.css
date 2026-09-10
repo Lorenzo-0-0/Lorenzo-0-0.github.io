@@ -131,7 +131,7 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: flex-start;
   gap: 40px;
-  margin-bottom: 60px;
+  margin-bottom: 76px;
 }
 .hero-photo {
   width: 190px;
@@ -142,27 +142,7 @@ a:hover { text-decoration: underline; }
   flex-shrink: 0;
   background: #EFEDEA;
 }
-.hero-text { flex: 1; min-width: 0; padding-top: 4px; }
-/* small-caps kicker above the name, sharing the section-title accent rule */
-.hero-kicker {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 0 0 12px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.hero-kicker::before {
-  content: "";
-  width: 30px;
-  height: 1.5px;
-  background: linear-gradient(90deg, var(--accent), rgba(194, 65, 12, 0));
-  border-radius: 1px;
-  flex-shrink: 0;
-}
+.hero-text { flex: 1; min-width: 0; }
 .hero-text h1 {
   font-family: var(--serif);
   font-weight: 400;
@@ -210,10 +190,8 @@ a:hover { text-decoration: underline; }
 
 /* ============ Section ============ */
 .section {
-  padding-top: 44px;
-  margin-bottom: 72px;
-  border-top: 1px solid var(--line);
-  scroll-margin-top: 64px;
+  margin-bottom: 76px;
+  scroll-margin-top: 80px;
 }
 .section h2 {
   font-family: var(--serif);
@@ -305,7 +283,7 @@ a:hover { text-decoration: underline; }
   width: 150px;
   height: 76px;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
   flex-shrink: 0;
 }
 .row--nologo { padding-left: 0; }
@@ -334,9 +312,8 @@ a:hover { text-decoration: underline; }
 .pub {
   display: flex;
   gap: 30px;
-  padding: 34px 0;
+  padding: 22px 0;
 }
-.pub + .pub { border-top: 1px solid var(--line); }
 .pub:first-of-type { padding-top: 0; }
 .pub:last-of-type { padding-bottom: 0; }
 .pub-teaser {
@@ -396,12 +373,6 @@ a:hover { text-decoration: underline; }
   background-size: 100% 1.5px;
   text-decoration: none;
 }
-/* own name in author lists */
-.pub-authors a.me {
-  font-weight: 600;
-  color: var(--ink);
-}
-.pub-authors a.me:hover { color: var(--teal); }
 .pub-links {
   display: flex;
   flex-wrap: wrap;
@@ -534,11 +505,10 @@ a:hover { text-decoration: underline; }
     margin-bottom: 40px;
   }
   .hero-photo { width: 128px; height: 128px; }
-  .hero-kicker { font-size: 11px; letter-spacing: 0.14em; }
   .hero-text h1 { font-size: 36px; }
   .bio { font-size: 16px; }
 
-  .section { padding-top: 32px; margin-bottom: 52px; }
+  .section { margin-bottom: 52px; }
   .section h2 { font-size: 24px; margin-bottom: 22px; }
 
   .news-item { flex-wrap: wrap; gap: 6px; }
@@ -553,7 +523,7 @@ a:hover { text-decoration: underline; }
   .tag { font-size: 18px; }
   .tag + .tag::before { margin: 0 12px; }
 
-  .pub { flex-direction: column; gap: 14px; padding: 26px 0; }
+  .pub { flex-direction: column; gap: 14px; padding: 18px 0; }
   .pub-teaser,
   .pub-teaser--video {
     width: 100%;
