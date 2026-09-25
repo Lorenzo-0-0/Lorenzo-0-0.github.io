@@ -223,9 +223,9 @@ a:hover { text-decoration: underline; }
 }
 .news-item {
   display: flex;
-  gap: 24px;
+  gap: 18px;
   align-items: baseline;
-  font-size: 15.5px;
+  font-size: 16px;
   line-height: 1.55;
 }
 .news-date {
@@ -238,8 +238,24 @@ a:hover { text-decoration: underline; }
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+/* Kind-of-news glyph between date and text; sits on the text baseline.
+   Accepted papers get the accent, everything else stays quiet. */
+.news-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  position: relative;
+  top: 3px;
+  color: var(--faint);
+}
+.news-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+.news-item--accept .news-icon { color: var(--accent); }
 .news-text {
   flex: 1;
+  min-width: 0;
   color: var(--body);
 }
 .news-text em { font-style: italic; color: var(--ink); }
@@ -285,6 +301,12 @@ a:hover { text-decoration: underline; }
   object-fit: contain;
   object-position: center;
   flex-shrink: 0;
+}
+/* Enlarged logo (Sharpa's flat wordmark): transform keeps the shared logo
+   column intact, so the text column still lines up with the other rows. */
+.row-logo--lg {
+  transform: scale(1.2);
+  transform-origin: center;
 }
 .row--nologo { padding-left: 0; }
 .row-main { flex: 1; min-width: 0; }
@@ -338,7 +360,12 @@ a:hover { text-decoration: underline; }
   margin-bottom: 8px;
 }
 .venue--gray { color: var(--faint); }
-.venue--red  { color: var(--accent); }
+/* Accepted venues read a step larger than the gray status labels */
+.venue--red {
+  color: var(--accent);
+  font-size: 13.5px;
+  letter-spacing: 0.13em;
+}
 .pub-title {
   font-family: var(--serif);
   font-size: 22px;
@@ -511,9 +538,9 @@ a:hover { text-decoration: underline; }
   .section { margin-bottom: 52px; }
   .section h2 { font-size: 24px; margin-bottom: 22px; }
 
-  .news-item { flex-wrap: wrap; gap: 6px; }
+  .news-item { flex-wrap: wrap; gap: 6px 10px; }
   .news-date { flex-basis: 100%; }
-  .news-text { font-size: 14.5px; }
+  .news-text { font-size: 15px; }
 
   .rows { gap: 24px; }
   .row { gap: 18px; }

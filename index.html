@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=32" />
+  <link rel="stylesheet" href="style.css?v=33" />
 </head>
 <body>
 
@@ -45,6 +45,8 @@
           <a href="https://marsyang.site/" target="_blank" rel="noopener">Prof. Jianfei Yang</a>.
           I obtained my B.Eng. degree from
           <a href="https://en.nwpu.edu.cn/" target="_blank" rel="noopener">Northwestern Polytechnical University</a>.
+          I am currently a research intern at
+          <a href="https://www.sharpa.com/" target="_blank" rel="noopener">Sharpa</a>, Singapore.
           Previously, I was a research intern at
           <a href="https://www.cuhk.edu.hk/" target="_blank" rel="noopener">The Chinese University of Hong Kong</a>
           and an exchange student at Efrei, Paris.
@@ -91,37 +93,60 @@
     <!-- ===== News ===== -->
     <section class="section" id="news">
       <h2>News</h2>
+      <!-- Each item carries a small line icon for its kind of news:
+           award = paper accepted, document = preprint on arXiv,
+           briefcase = new position, cap = joined the lab. -->
       <ul class="news-list">
-        <li class="news-item">
+        <li class="news-item news-item--accept">
           <span class="news-date">Sep 2026</span>
+          <span class="news-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span>
           <span class="news-text">
-            Our paper <em>ADAPT</em> is accepted to
+            <em>Feedback World Model</em> is accepted to
+            <strong class="news-highlight">NeurIPS 2026</strong>.
+          </span>
+        </li>
+        <li class="news-item news-item--work">
+          <span class="news-date">Sep 2026</span>
+          <span class="news-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg></span>
+          <span class="news-text">
+            Joined <a href="https://www.sharpa.com/" target="_blank" rel="noopener">Sharpa</a> in Singapore as a Research Intern.
+          </span>
+        </li>
+        <li class="news-item news-item--accept">
+          <span class="news-date">Sep 2026</span>
+          <span class="news-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span>
+          <span class="news-text">
+            <em>ADAPT</em> is accepted to
             <strong class="news-highlight">CoRL 2026</strong>.
           </span>
         </li>
-        <li class="news-item">
+        <li class="news-item news-item--accept">
           <span class="news-date">Mar 2026</span>
+          <span class="news-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span>
           <span class="news-text">
-            Our paper <em>Action-to-Action Flow Matching</em> is accepted to
+            <em>Action-to-Action Flow Matching</em> is accepted to
             <strong class="news-highlight">RSS 2026</strong>.
           </span>
         </li>
-        <li class="news-item">
+        <li class="news-item news-item--preprint">
           <span class="news-date">Feb 2026</span>
+          <span class="news-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span>
           <span class="news-text">
-            Our paper <em>CompassAD</em> is now available on arXiv.
+            <em>CompassAD</em> is now available on arXiv.
           </span>
         </li>
-        <li class="news-item">
+        <li class="news-item news-item--preprint">
           <span class="news-date">Jan 2026</span>
+          <span class="news-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span>
           <span class="news-text">
-            Our paper <em>Feedback World Model</em> is now available on arXiv.
+            <em>Feedback World Model</em> is now available on arXiv.
           </span>
         </li>
-        <li class="news-item">
+        <li class="news-item news-item--milestone">
           <span class="news-date">Sep 2025</span>
+          <span class="news-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
           <span class="news-text">
-            Joined <a href="https://marslab.tech/" target="_blank" rel="noopener">MARS Lab</a> at NTU as a PhD student, advised by Prof. Jianfei Yang.
+            Joined <a href="https://marslab.tech/" target="_blank" rel="noopener">MARS Lab</a> at NTU as a Ph.D. student, advised by Prof. Jianfei Yang.
           </span>
         </li>
       </ul>
@@ -242,31 +267,6 @@
       </article>
 
       <article class="pub">
-        <img class="pub-teaser" src="assets/teaser_fwm.png?v=13" alt="Feedback World Model teaser" />
-        <div class="pub-body">
-          <div class="pub-venue venue--gray">Under Review</div>
-          <h3 class="pub-title">Feedback World Model Enables Precise Guidance of Diffusion Policy</h3>
-          <p class="pub-authors">
-            <a href="https://morpheus-an.github.io/" target="_blank" rel="noopener">Tuo An</a>,
-            <a href="https://jiajindou.github.io/" target="_blank" rel="noopener">Jindou Jia</a>,
-            <a href="https://reagan1311.github.io/" target="_blank" rel="noopener">Gen Li</a>,
-            <a href="https://jingliangli.com/">Jingliang Li</a>,
-            <a href="https://chuhaozhou99.github.io/Chuhao-Zhou/" target="_blank" rel="noopener">Chuhao Zhou</a>,
-            Pengfei Liu, Bofan Lyu, Jiaqi Bai,
-            <a href="https://scholar.google.com/citations?hl=en&amp;user=KWXEabIAAAAJ&amp;view_op=list_works&amp;sortby=pubdate" target="_blank" rel="noopener">Xinying Guo</a>,
-            <a href="https://scholar.google.com/citations?user=SZg1xeoAAAAJ&amp;hl=zh-CN" target="_blank" rel="noopener">Geng Li</a>,
-            <a href="https://marsyang.site/" target="_blank" rel="noopener">Jianfei Yang</a>
-          </p>
-          <p class="pub-links">
-            <a class="btn" href="https://jingliangli.com/Feedback_World_Model/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Website</a>
-            <a class="btn" href="https://arxiv.org/pdf/2605.15705" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>PDF</a>
-            <a class="btn" href="https://arxiv.org/abs/2605.15705" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>arXiv</a>
-            <a class="btn" href="https://github.com/Lorenzo-0-0/Feedback_World_Model" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6"/><path d="m16 6 6 6-6 6"/></svg>Code</a>
-          </p>
-        </div>
-      </article>
-
-      <article class="pub">
         <img class="pub-teaser" src="assets/teaser_compassad.png?v=13" alt="CompassAD teaser" />
         <div class="pub-body">
           <div class="pub-venue venue--gray">Under Review</div>
@@ -288,6 +288,31 @@
             <a class="btn" href="https://arxiv.org/pdf/2604.02060" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>PDF</a>
             <a class="btn" href="https://arxiv.org/abs/2604.02060" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>arXiv</a>
             <a class="btn" href="https://github.com/Lorenzo-0-0/CompassAD-Intent-Driven-3D-Affordance-Grounding-in-Functionally-Competing-Objects" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6"/><path d="m16 6 6 6-6 6"/></svg>Code</a>
+          </p>
+        </div>
+      </article>
+
+      <article class="pub">
+        <img class="pub-teaser" src="assets/teaser_fwm.png?v=13" alt="Feedback World Model teaser" />
+        <div class="pub-body">
+          <div class="pub-venue venue--red">NeurIPS 2026</div>
+          <h3 class="pub-title">Feedback World Model Enables Precise Guidance of Diffusion Policy</h3>
+          <p class="pub-authors">
+            <a href="https://morpheus-an.github.io/" target="_blank" rel="noopener">Tuo An</a>,
+            <a href="https://jiajindou.github.io/" target="_blank" rel="noopener">Jindou Jia</a>,
+            <a href="https://reagan1311.github.io/" target="_blank" rel="noopener">Gen Li</a>,
+            <a href="https://jingliangli.com/">Jingliang Li</a>,
+            <a href="https://chuhaozhou99.github.io/Chuhao-Zhou/" target="_blank" rel="noopener">Chuhao Zhou</a>,
+            Pengfei Liu, Bofan Lyu, Jiaqi Bai,
+            <a href="https://scholar.google.com/citations?hl=en&amp;user=KWXEabIAAAAJ&amp;view_op=list_works&amp;sortby=pubdate" target="_blank" rel="noopener">Xinying Guo</a>,
+            <a href="https://scholar.google.com/citations?user=SZg1xeoAAAAJ&amp;hl=zh-CN" target="_blank" rel="noopener">Geng Li</a>,
+            <a href="https://marsyang.site/" target="_blank" rel="noopener">Jianfei Yang</a>
+          </p>
+          <p class="pub-links">
+            <a class="btn" href="https://jingliangli.com/Feedback_World_Model/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Website</a>
+            <a class="btn" href="https://arxiv.org/pdf/2605.15705" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>PDF</a>
+            <a class="btn" href="https://arxiv.org/abs/2605.15705" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>arXiv</a>
+            <a class="btn" href="https://github.com/Lorenzo-0-0/Feedback_World_Model" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6"/><path d="m16 6 6 6-6 6"/></svg>Code</a>
           </p>
         </div>
       </article>
@@ -320,6 +345,37 @@
       </article>
     </section>
 
+    <!-- ===== Experience ===== -->
+    <section class="section" id="experience">
+      <h2>Experience</h2>
+      <ul class="rows">
+        <li class="row">
+          <img class="row-logo row-logo--lg" src="assets/sharpa_logo.png?v=1" alt="Sharpa logo" />
+          <div class="row-main">
+            <div class="row-title">Sharpa, Singapore</div>
+            <div class="row-sub">Research Intern</div>
+          </div>
+          <div class="row-year">2026&ndash;</div>
+        </li>
+        <li class="row">
+          <img class="row-logo" src="assets/cuhk_logo.png?v=2" alt="CUHK logo" />
+          <div class="row-main">
+            <div class="row-title">The Chinese University of Hong Kong, Hong Kong</div>
+            <div class="row-sub">Research Intern</div>
+          </div>
+          <div class="row-year">2024</div>
+        </li>
+        <li class="row">
+          <img class="row-logo" src="assets/efrei_logo.png" alt="Efrei logo" />
+          <div class="row-main">
+            <div class="row-title">Efrei, Paris</div>
+            <div class="row-sub">Exchange Student</div>
+          </div>
+          <div class="row-year">2024</div>
+        </li>
+      </ul>
+    </section>
+
     <!-- ===== Education ===== -->
     <section class="section" id="education">
       <h2>Education</h2>
@@ -340,29 +396,6 @@
             <div class="row-sub">GPA: 89.2 / 100</div>
           </div>
           <div class="row-year">2021&ndash;2025</div>
-        </li>
-      </ul>
-    </section>
-
-    <!-- ===== Experience ===== -->
-    <section class="section" id="experience">
-      <h2>Experience</h2>
-      <ul class="rows">
-        <li class="row">
-          <img class="row-logo" src="assets/cuhk_logo.png?v=2" alt="CUHK logo" />
-          <div class="row-main">
-            <div class="row-title">The Chinese University of Hong Kong, Hong Kong</div>
-            <div class="row-sub">Research Intern</div>
-          </div>
-          <div class="row-year">2024</div>
-        </li>
-        <li class="row">
-          <img class="row-logo" src="assets/efrei_logo.png" alt="Efrei logo" />
-          <div class="row-main">
-            <div class="row-title">Efrei, Paris</div>
-            <div class="row-sub">Exchange Student</div>
-          </div>
-          <div class="row-year">2024</div>
         </li>
       </ul>
     </section>
