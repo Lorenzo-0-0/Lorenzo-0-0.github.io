@@ -1,6 +1,6 @@
 /* ============ Tokens ============ */
 :root {
-  --paper: #FAFAF9;
+  --paper: #FFFFFF;
   --ink: #1C1917;
   --body: #33302D;
   --muted: #6B6560;
@@ -30,8 +30,9 @@ body {
   font-kerning: normal;
   font-feature-settings: "kern", "liga", "calt";
 }
-/* Paper grain: a faint, fine noise laid over the whole page for tactile depth.
-   Pure CSS (inline SVG turbulence), no image request, click-through. */
+/* Paper grain: a faint, fine neutral-gray noise laid over the pure-white page
+   for tactile depth without tinting it. Pure CSS (inline SVG turbulence),
+   no image request, click-through. */
 body::before {
   content: "";
   position: fixed;
@@ -63,7 +64,7 @@ a:hover { text-decoration: underline; }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(250, 250, 249, 0.82);
+  background: rgba(255, 255, 255, 0.82);
   backdrop-filter: saturate(160%) blur(12px);
   -webkit-backdrop-filter: saturate(160%) blur(12px);
   border-bottom: 1px solid var(--line);
@@ -140,7 +141,7 @@ a:hover { text-decoration: underline; }
   object-fit: cover;
   object-position: center top;
   flex-shrink: 0;
-  background: #EFEDEA;
+  background: #F2F2F2;
 }
 .hero-text { flex: 1; min-width: 0; }
 .hero-text h1 {
