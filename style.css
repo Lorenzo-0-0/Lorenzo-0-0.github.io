@@ -361,6 +361,12 @@ a:hover { text-decoration: underline; }
   margin-bottom: 8px;
 }
 .venue--gray { color: var(--faint); }
+/* arXiv keeps its own casing instead of the uppercase status style */
+.venue--arxiv {
+  text-transform: none;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
 /* Accepted venues read a step larger than the gray status labels */
 .venue--red {
   color: var(--accent);
