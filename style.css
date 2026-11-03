@@ -259,7 +259,10 @@ a:hover { text-decoration: underline; }
   min-width: 0;
   color: var(--body);
 }
-.news-text em { font-style: italic; color: var(--ink); }
+/* Paper names link to their project pages: bold ink, no italics */
+.news-paper { color: var(--ink); font-weight: 600; }
+/* Organisations (Sharpa Robotics, MARS Lab) keep the link accent, in bold */
+.news-org { font-weight: 600; }
 .news-highlight {
   color: var(--accent);
   font-weight: 600;
