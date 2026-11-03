@@ -1,4 +1,4 @@
-/* ============ Fonts (self-hosted, latin + latin-ext from Google Fonts) ============ */
+/* ============ Fonts (self-hosted: Google Fonts latin + latin-ext, and ET Book) ============ */
 /* Hedvig Letters Serif — latin-ext */
 @font-face {
   font-family: 'Hedvig Letters Serif';
@@ -39,44 +39,41 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Cormorant Garamond — latin-ext */
+/* Marcellus — latin-ext */
 @font-face {
-  font-family: 'Cormorant Garamond';
+  font-family: 'Marcellus';
   font-style: normal;
-  font-weight: 600;
+  font-weight: 400;
   font-display: swap;
-  src: url('assets/fonts/cormorant-garamond-600-latin-ext.woff2') format('woff2');
+  src: url('assets/fonts/marcellus-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-/* Cormorant Garamond — latin */
+/* Marcellus — latin */
 @font-face {
-  font-family: 'Cormorant Garamond';
+  font-family: 'Marcellus';
   font-style: normal;
-  font-weight: 600;
+  font-weight: 400;
   font-display: swap;
-  src: url('assets/fonts/cormorant-garamond-600-latin.woff2') format('woff2');
+  src: url('assets/fonts/marcellus-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* EB Garamond — latin-ext */
+/* ET Book (Tufte CSS) — MIT licence, see assets/fonts/et-book-LICENSE.txt */
 @font-face {
-  font-family: 'EB Garamond';
+  font-family: 'et-book';
   font-style: normal;
-  font-weight: 400 600;
+  font-weight: 400;
   font-display: swap;
-  src: url('assets/fonts/eb-garamond-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url('assets/fonts/et-book-roman.woff') format('woff');
 }
 
-/* EB Garamond — latin */
 @font-face {
-  font-family: 'EB Garamond';
+  font-family: 'et-book';
   font-style: normal;
-  font-weight: 400 600;
+  font-weight: 700;
   font-display: swap;
-  src: url('assets/fonts/eb-garamond-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url('assets/fonts/et-book-bold.woff') format('woff');
 }
 
 /* ============ Tokens ============ */
@@ -92,8 +89,8 @@
   --teal: #14B8A6;
   --serif: 'Hedvig Letters Serif', Georgia, 'Times New Roman', serif;
   --sans: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --display: 'Cormorant Garamond', 'Hedvig Letters Serif', Georgia, serif;
-  --text-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  --display: 'Marcellus', 'Hedvig Letters Serif', Georgia, serif;
+  --text-serif: 'et-book', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
 }
 
 /* ============ Reset / base ============ */
@@ -225,15 +222,15 @@ a:hover { text-decoration: underline; }
   object-position: center top;
   flex-shrink: 0;
   background: #F2F2F2;
-  margin-top: 36px; /* bottom edge lines up with the last line of the bio */
+  margin-top: 32px; /* bottom edge lines up with the last line of the bio */
 }
 .hero-text { flex: 1; min-width: 0; }
 .hero-text h1 {
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 64px;
+  font-weight: 400;
+  font-size: 60px;
   line-height: 1;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
   color: var(--ink);
   margin: 0 0 18px;
 }
@@ -651,7 +648,7 @@ sup.eq {
     margin-bottom: 40px;
   }
   .hero-photo { width: 128px; height: 128px; margin-top: 0; }
-  .hero-text h1 { font-size: 44px; }
+  .hero-text h1 { font-size: 42px; }
   .bio { font-size: 16px; }
 
   .section { margin-bottom: 52px; }
